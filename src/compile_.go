@@ -32,9 +32,9 @@ func CreateConfig(projectName string) error {
 	config.SetCompiler("g++")
 	config.SetPath()
 
+	fmt.Printf("________Created_project_%s________\n\n", projectName)
 	fmt.Printf("________config:________\n| name: %s\n| compiler: %s\n| path: %s\n", config.GetName(), config.GetCompiler(), config.GetPath())
 	jsonFile, err := json.Marshal(config)
-	fmt.Println(string(jsonFile))
 	if err != nil {
 		return err
 	}
