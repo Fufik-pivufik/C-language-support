@@ -16,10 +16,51 @@ func main() {
 
 	switch argv[1] {
 	case "help":
-		fmt.Println("_______________________cls_options______________________\n| new <project_name>   creates new directory and initializes git repository with simple structure and default hello world app:")
-		fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|\n| run [list of C/CPP files]  builds and executes all source files from list\n|\t\tWithout list of files executes project from root or inner directory\n|")
-		fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main)\n|\t\t Without arguments build project from root or inner directory")
-		//fmt.Println("| ")
-	}
+		if argc < 3 {
+			fmt.Println("_______________________cls_options______________________\n| new <project_name>   creates new directory with simple structure and default hello world app:")
+			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|\n| run [list of C/CPP files]  builds and executes all source files from list\n|\t\tWithout list of files executes project from root or inner directory\n|")
+			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main)\n|\t\t Without arguments build project from root or inner directory")
+			//fmt.Println("| ")
+		}
 
+	case "new":
+		if argc < 3 {
+			fmt.Println("Error: missing arguments for 'new'\n| try:   $ cls help new    for more information")
+			return
+		}
+
+		err := os.Mkdir(argv[2], 0777)
+		if err != nil {
+			fmt.Println("Error: cannot create directory ", err)
+			return
+		}
+
+		srcPath := argv[2] + "/src"
+		err = os.Mkdir(srcPath, 0777)
+		if err != nil {
+			fmt.Println("Error: cannot create directory ", err)
+			return
+		}
+
+		mainPath := srcPath + "/main.cpp"
+		mainFile, err := os.Create(mainPath)
+		if err != nil {
+			fmt.Println("Error: cannot create file ", err)
+			return
+		}
+
+		err = DefaultCppFile(mainFile)
+		if err != nil {
+			fmt.Println("Error: cannot create default code: ", err)
+			return
+		}
+		err = CreateConfig(argv[2])
+		if err != nil {
+			fmt.Println("Error: cannot create default configuration: ", err)
+			return
+		}
+
+	default:
+		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")
+	}
 }
