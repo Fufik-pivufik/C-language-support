@@ -33,7 +33,7 @@ func CreateConfig(projectName string) error {
 	config.SetPath()
 
 	fmt.Printf("________Created_project_%s________\n\n", projectName)
-	fmt.Printf("________config:________\n| name: %s\n| compiler: %s\n| path: %s\n", config.GetName(), config.GetCompiler(), config.GetPath())
+	config.display()
 	jsonFile, err := json.Marshal(config)
 	if err != nil {
 		return err

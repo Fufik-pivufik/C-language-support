@@ -42,6 +42,10 @@ func (conf Config) GetPath() string {
 	return conf.Path
 }
 
+func (conf Config) display() {
+	fmt.Printf("________config:________\n| name: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetCompiler(), conf.GetPath())
+}
+
 func ReadConfig(path string) *Config {
 	file, err := os.ReadFile(path)
 	if err != nil {
