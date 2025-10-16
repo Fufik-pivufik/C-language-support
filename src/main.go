@@ -61,6 +61,8 @@ func main() {
 		}
 
 	case "build":
+
+		// compiling lsit of files
 		if argc > 2 {
 			compileArgs := ParseInputCompile(os.Args[2:])
 			cmd := exec.Command("g++", compileArgs...)
@@ -79,6 +81,8 @@ func main() {
 
 			break
 		}
+
+		//building for project
 		go fmt.Println("Finging config.json...")
 
 	default:
