@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -39,4 +40,21 @@ func (conf Config) GetCompiler() string {
 
 func (conf Config) GetPath() string {
 	return conf.Path
+}
+
+func ReadConfig(path string) *Config {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		fmt.Println("Error cannot onpen config file: ", err)
+		return &Config{}
+	}
+
+	var result Config
+	err = json.Unmarshal(file, &result)
+	if err != nil {
+		fmt.Println("Error cannot parse json file: ", err)
+		return &Config{}
+	}
+
+	return &result
 }

@@ -84,6 +84,26 @@ func main() {
 
 		//building for project
 		go fmt.Println("Finging config.json...")
+		isEx, configPath := ConfigExists()
+		if !isEx {
+			fmt.Println("Error: config file does not exists")
+			return
+		}
+
+		go fmt.Println("Reading configuration file...")
+		config := ReadConfig(configPath)
+		files := GetFiles(config.GetPath())
+		files = append(files, "-o", config.GetName())
+		cmd := exec.Command(config.GetCompiler(), files...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		go fmt.Println("Compiling project...")
+
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println("Compile error: ", err)
+			os.Exit(1)
+		}
 
 	default:
 		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")

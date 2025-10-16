@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 )
 
@@ -23,4 +26,26 @@ func notCfile(filename string) bool {
 	res_c, _ := regexp.MatchString(`^[a-zA-Z0-9/._%+-]+\.cpp`, filename)
 	res_cpp, _ := regexp.MatchString(`^[a-zA-Z0-9/._%+-]+\.c`, filename)
 	return !(res_c || res_cpp)
+}
+
+func GetFiles(projectPath string) []string {
+	srcPath := projectPath + "/src"
+
+	result := make([]string, 0)
+	files, err := os.ReadDir(srcPath)
+	if err != nil {
+		fmt.Println("Error cannot read files: ", err)
+		return result
+	}
+
+	for _, file := range files {
+		filename := file.Name()
+		res_c, _ := regexp.MatchString(`^[a-zA-Z0-9/._%+-]+\.cpp`, filename)
+		res_cpp, _ := regexp.MatchString(`^[a-zA-Z0-9/._%+-]+\.c`, filename)
+		if res_c || res_cpp {
+			result = append(result, filepath.Join(srcPath, filename))
+		}
+	}
+
+	return result
 }
