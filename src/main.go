@@ -105,6 +105,10 @@ func main() {
 			os.Exit(1)
 		}
 
+		go func() {
+			fmt.Printf("Compilation complete!\n| Used %s\n| Executable file %s\n", config.GetCompiler(), config.GetName())
+		}()
+
 	default:
 		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")
 	}
