@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	// "os/exec"
+	"os/exec"
 )
 
 func main() {
@@ -60,6 +60,22 @@ func main() {
 			return
 		}
 
+	case "build":
+		if argc > 2 {
+			compileArgs := ParseInputCompile(os.Args[2:])
+			cmd := exec.Command("g++", compileArgs...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println("Compile error: ", err)
+				os.Exit(1)
+			}
+
+			break
+		}
+		fmt.Printf("Finging config.json...")
 	default:
 		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")
 	}

@@ -2,11 +2,9 @@ package main
 
 import (
 	"regexp"
-	"strings"
 )
 
-func ParseInputCompile(input string) []string {
-	result := strings.Split(input, " ")
+func ParseInputCompile(result []string) []string {
 	outputfile := result[len(result)-1]
 
 	if notCfile(outputfile) {
@@ -16,11 +14,13 @@ func ParseInputCompile(input string) []string {
 		return result
 	}
 
+	result = append(result, "-o")
+	result = append(result, "main")
 	return result
 }
 
 func notCfile(filename string) bool {
-	res_c, _ := regexp.MatchString(`^[a-zA-Z0-9._%+-]+\.cpp`, filename)
-	res_cpp, _ := regexp.MatchString(`^[a-zA-Z0-9._%+-]+\.c`, filename)
+	res_c, _ := regexp.MatchString(`^[a-zA-Z0-9/._%+-]+\.cpp`, filename)
+	res_cpp, _ := regexp.MatchString(`^[a-zA-Z0-9/._%+-]+\.c`, filename)
 	return !(res_c || res_cpp)
 }
