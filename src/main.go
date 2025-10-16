@@ -10,7 +10,7 @@ func main() {
 	argv := os.Args
 	argc := len(argv)
 	if argc < 2 {
-		fmt.Println("Error: missing arguments\n| use:   $ cls help    for more information")
+		fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
 		return
 	}
 
@@ -20,7 +20,10 @@ func main() {
 			fmt.Println("_______________________cls_options______________________\n| new <project_name>   creates new directory with simple structure and default hello world app:")
 			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|\n| run [list of C/CPP files]  builds and executes all source files from list\n|\t\tWithout list of files executes project from root or inner directory\n|")
 			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
-			//fmt.Println("| ")
+			fmt.Println("| config <display/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself, 'display' shows current configuration")
+			fmt.Println("|                                                                                                             'name' allows you change name for your project(doesn't change directory name)")
+			fmt.Println("|                                                                                                             'compiler' allows you change compiler for your project")
+			fmt.Println("|                                                                                                             'path' updates path to current")
 		}
 
 	case "new":
@@ -86,7 +89,7 @@ func main() {
 		go fmt.Println("Finging config.json...")
 		isEx, configPath := ConfigExists()
 		if !isEx {
-			fmt.Println("Error: config file does not exists")
+			fmt.Println("Error: config file does not exist")
 			return
 		}
 
@@ -106,6 +109,54 @@ func main() {
 		}
 
 		fmt.Printf("Compilation complete!\n| Used %s\n| Executable file %s\n", config.GetCompiler(), config.GetName())
+
+	case "config":
+		if argc < 3 {
+			fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
+			return
+		}
+
+		isEx, configPath := ConfigExists()
+		if !isEx {
+			fmt.Println("Error: config file does not exist")
+			return
+		}
+
+		config := ReadConfig(configPath)
+		switch argv[2] {
+		case "display":
+			config.display()
+
+		case "name":
+			if argc < 4 {
+				fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
+				return
+			}
+
+			config.Name = argv[3]
+			fmt.Println("Project's name succesfully updated")
+
+		case "compiler":
+			if argc < 4 {
+				fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
+				return
+			}
+
+			config.Compiler = argv[3]
+			fmt.Println("Project's compiler succesfully updated")
+
+		case "path":
+			config.SetPath()
+			fmt.Println("Path to project succesfully updated")
+
+		default:
+			fmt.Println("Error: unknown argument for 'config'\n| try    $ cls help   for more information")
+			return
+		}
+		err := ConfigUpdate(config)
+		if err != nil {
+			panic(err)
+		}
 
 	default:
 		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")

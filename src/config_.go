@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type Config struct {
@@ -61,4 +62,17 @@ func ReadConfig(path string) *Config {
 	}
 
 	return &result
+}
+
+func ConfigUpdate(conf *Config) error {
+	textUpdate, err := json.Marshal(conf)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(filepath.Join(conf.GetPath(), "config.json"), textUpdate, 0777)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
