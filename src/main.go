@@ -67,6 +67,10 @@ func main() {
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 
+			go func() {
+				fmt.Println("Compiling...")
+			}()
+
 			err := cmd.Run()
 			if err != nil {
 				fmt.Println("Compile error: ", err)
@@ -75,7 +79,8 @@ func main() {
 
 			break
 		}
-		fmt.Printf("Finging config.json...")
+		go fmt.Println("Finging config.json...")
+
 	default:
 		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")
 	}
