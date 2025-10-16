@@ -18,7 +18,7 @@ func main() {
 	case "help":
 		if argc < 3 {
 			fmt.Println("_______________________cls_options______________________\n| new <project_name>   creates new directory with simple structure and default hello world app:")
-			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|\n| run [list of C/CPP files]  builds and executes all source files from list\n|\t\tWithout list of files executes project from root or inner directory\n|")
+			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|")
 			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
 			fmt.Println("| config <display/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself, 'display' shows current configuration")
 			fmt.Println("|                                                                                                             'name' allows you change name for your project(doesn't change directory name)")
