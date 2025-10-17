@@ -113,7 +113,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		fmt.Printf("Compilation complete!\n| Used %s\n| Executable file %s\n", config.GetCompiler(), config.GetName())
+		fmt.Printf("Compilation complete!\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
 
 	case "config":
 		if argc < 3 {
