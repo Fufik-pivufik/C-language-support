@@ -89,14 +89,14 @@ func main() {
 		}
 
 		//building for project
-		go fmt.Println("Finging config.json...")
+		fmt.Println("\n\n ____________Finging_config.json..._______")
 		isEx, configPath := ConfigExists()
 		if !isEx {
 			fmt.Println("Error: config file does not exist")
 			return
 		}
 		fmt.Println("| config file found at ", configPath)
-		go fmt.Println("Reading configuration file...")
+		fmt.Println("| Reading configuration file...\n|_________________________________________\n")
 		config := ReadConfig(configPath)
 		files := GetFiles(config.GetPath())
 		Print_all_files(&files)
@@ -105,7 +105,7 @@ func main() {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
-		go fmt.Println("Compiling project...")
+		fmt.Println("\n\nCompiling project...")
 
 		err := cmd.Run()
 		if err != nil {
@@ -113,7 +113,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		fmt.Printf("Compilation complete!\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
+		fmt.Printf("\n ____________Compilation_ complete!__________\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
 
 	case "config":
 		if argc < 3 {
