@@ -9,8 +9,10 @@ import (
 
 type Config struct {
 	Name     string `json:"name"`
+	MainFile string `json:"main-file"`
 	Compiler string `json:"compiler"`
 	Path     string `json:"path"`
+	TestPath string `json:"test-path"`
 }
 
 func (conf *Config) SetName(name string) {

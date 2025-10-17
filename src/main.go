@@ -17,13 +17,16 @@ func main() {
 	switch argv[1] {
 	case "help":
 		if argc < 3 {
-			fmt.Println("_______________________cls_options______________________\n| new <project_name>   creates new directory with simple structure and default hello world app:")
+			fmt.Println("_______________________cls_options______________________")
+			fmt.Println("| new <project_name>   creates new directory with simple structure and default hello world app:")
 			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|")
 			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
 			fmt.Println("| config <display/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself, 'display' shows current configuration")
 			fmt.Println("|                                                                                                             'name' allows you change name for your project(doesn't change directory name)")
 			fmt.Println("|                                                                                                             'compiler' allows you change compiler for your project")
 			fmt.Println("|                                                                                                             'path' updates path to current")
+			fmt.Println("| test <run/path> < /full_path_to_test> you can create your test(but only with main function. You can find example in readme file)")
+			fmt.Println("|                                       'path' + <full_path_to_test> you can include test from another file")
 		}
 
 	case "new":
@@ -92,14 +95,16 @@ func main() {
 			fmt.Println("Error: config file does not exist")
 			return
 		}
-
+		fmt.Println("| config file found at ", configPath)
 		go fmt.Println("Reading configuration file...")
 		config := ReadConfig(configPath)
 		files := GetFiles(config.GetPath())
+		Print_all_files(&files)
 		files = append(files, "-o", config.GetName())
 		cmd := exec.Command(config.GetCompiler(), files...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+
 		go fmt.Println("Compiling project...")
 
 		err := cmd.Run()
@@ -156,6 +161,24 @@ func main() {
 		err := ConfigUpdate(config)
 		if err != nil {
 			panic(err)
+		}
+
+	case "test":
+		if argc < 3 {
+			fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
+			return
+		}
+
+		switch argv[2] {
+		case "run":
+
+		case "path":
+			if argc < 4 {
+				fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
+				return
+			}
+		default:
+			fmt.Println("Error: unknown argument for 'test'\n| try    $ cls help   for more information")
 		}
 
 	default:

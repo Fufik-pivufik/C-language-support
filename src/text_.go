@@ -49,3 +49,10 @@ func GetFiles(projectPath string) []string {
 
 	return result
 }
+
+func Print_all_files(files *[]string) {
+	fmt.Println("____Found_files____")
+	for i, file := range *files {
+		fmt.Println("| ", i, " ", file)
+	}
+}
