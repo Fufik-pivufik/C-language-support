@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -69,6 +70,27 @@ func (conf Config) display() {
 	}
 
 	fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| test file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetTestPath(), conf.GetCompiler(), conf.GetPath())
+}
+
+func ConfigExists() (bool, string) {
+	file := "config.json"
+	var err error = os.ErrNotExist
+	home, _ := os.UserHomeDir()
+	home, _ = filepath.Abs(home)
+	lastPath := ""
+	filePath, _ := os.Getwd()
+	for errors.Is(err, os.ErrNotExist) {
+		lastPath = filePath
+		_, err = os.Stat(filepath.Join(filePath, file))
+
+		filePath = filepath.Dir(filePath)
+
+		if filePath == home {
+			return false, ""
+		}
+
+	}
+	return true, filepath.Join(lastPath, file)
 }
 
 func ReadConfig(path string) *Config {

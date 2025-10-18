@@ -21,7 +21,7 @@ func main() {
 			fmt.Println("| new <project_name>   creates new directory with simple structure and default hello world app:")
 			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|")
 			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
-			fmt.Println("| config <display/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself, 'display' shows current configuration")
+			fmt.Println("| config <show/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself, 'show' shows current configuration")
 			fmt.Println("|                                                                                                             'name' allows you change name for your project(doesn't change directory name)")
 			fmt.Println("|                                                                                                             'compiler' allows you change compiler for your project")
 			fmt.Println("|                                                                                                             'path' updates path to current")
@@ -98,8 +98,8 @@ func main() {
 		fmt.Println("| config file found at ", configPath)
 		fmt.Println("| Reading configuration file...\n|_________________________________________\n")
 		config := ReadConfig(configPath)
-		files := GetFiles(config.GetPath())
-		Print_all_files(&files)
+		files := GetFiles(string(config.GetPath() + "/src"))
+		PrintAllFiles(&files)
 		files = append(files, "-o", config.GetName())
 		cmd := exec.Command(config.GetCompiler(), files...)
 		cmd.Stdout = os.Stdout
@@ -108,6 +108,13 @@ func main() {
 		fmt.Println("\n\nCompiling project...")
 
 		err := cmd.Run()
+		if err != nil {
+			fmt.Println("Compile error: ", err)
+			os.Exit(1)
+		}
+
+		move := exec.Command("mv", config.GetName(), config.GetPath())
+		err = move.Run()
 		if err != nil {
 			fmt.Println("Compile error: ", err)
 			os.Exit(1)
@@ -129,7 +136,7 @@ func main() {
 
 		config := ReadConfig(configPath)
 		switch argv[2] {
-		case "display":
+		case "show":
 			config.display()
 
 		case "name":
