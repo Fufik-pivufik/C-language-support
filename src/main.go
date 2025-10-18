@@ -15,6 +15,7 @@ func main() {
 	case "help":
 		if argc < 3 {
 			fmt.Println("_______________________cls_options______________________")
+			fmt.Println("| version              shows current cls version\n|")
 			fmt.Println("| new <project_name>   creates new directory with simple structure and default hello world app:")
 			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|")
 			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
@@ -26,6 +27,9 @@ func main() {
 			fmt.Println("|                                                'create' creates base test file with default path: <project>/test/test.cpp")
 			fmt.Println("|                                       'path' + <full_path_to_test> you can include test from another file")
 		}
+
+	case "version":
+		fmt.Printf("| cls version %s", Version)
 
 	case "new":
 		ArgsCheck(argc, 3)
