@@ -29,7 +29,7 @@ func main() {
 		}
 
 	case "version":
-		fmt.Printf("| cls version %s", Version)
+		fmt.Printf("| cls version %s\n", Version)
 
 	case "new":
 		ArgsCheck(argc, 3)
