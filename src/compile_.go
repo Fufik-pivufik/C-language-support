@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -16,30 +14,6 @@ func DefaultCppFile(file *os.File) error {
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func CreateConfig(projectName string) error {
-	configPath := projectName + "/config.json"
-	configFile, err := os.Create(configPath)
-	if err != nil {
-		return err
-	}
-	defer configFile.Close()
-
-	config := new(Config)
-	config.SetName(projectName)
-	config.SetCompiler("g++")
-	config.SetPath()
-
-	fmt.Printf("________Created_project_%s________\n\n", projectName)
-	config.display()
-	jsonFile, err := json.Marshal(config)
-	if err != nil {
-		return err
-	}
-
-	configFile.Write(jsonFile)
 	return nil
 }
 

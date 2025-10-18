@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	// Version  string `json:"cls-version"`
 	Name     string `json:"name"`
 	MainFile string `json:"main-file"`
 	Compiler string `json:"compiler"`
@@ -23,6 +24,14 @@ func (conf *Config) SetCompiler(compiler string) {
 	conf.Compiler = compiler
 }
 
+func (conf *Config) SetMainFile(filename string) {
+	conf.MainFile = filename
+}
+
+func (conf *Config) SetTestPath(filepath string) {
+	conf.TestPath = filepath
+}
+
 func (conf *Config) SetPath() {
 	path, err := os.Getwd()
 	if err != nil {
@@ -33,20 +42,33 @@ func (conf *Config) SetPath() {
 	conf.Path = path + "/" + conf.Name
 }
 
-func (conf Config) GetName() string {
+func (conf *Config) GetName() string {
 	return conf.Name
 }
 
-func (conf Config) GetCompiler() string {
+func (conf *Config) GetCompiler() string {
 	return conf.Compiler
 }
 
-func (conf Config) GetPath() string {
+func (conf *Config) GetPath() string {
 	return conf.Path
 }
 
+func (conf *Config) GetMainFile() string {
+	return conf.MainFile
+}
+
+func (conf *Config) GetTestPath() string {
+	return conf.TestPath
+}
+
 func (conf Config) display() {
-	fmt.Printf("________config:________\n| name: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetCompiler(), conf.GetPath())
+	if conf.TestPath == "" {
+		fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetCompiler(), conf.GetPath())
+		return
+	}
+
+	fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| test file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetTestPath(), conf.GetCompiler(), conf.GetPath())
 }
 
 func ReadConfig(path string) *Config {
@@ -64,6 +86,34 @@ func ReadConfig(path string) *Config {
 	}
 
 	return &result
+}
+
+func CreateConfig(projectName string) error {
+	configPath := projectName + "/config.json"
+	configFile, err := os.Create(configPath)
+	if err != nil {
+		return err
+	}
+	defer configFile.Close()
+
+	config := new(Config)
+
+	// default configuration for project
+	config.SetName(projectName)
+	config.SetCompiler("g++")
+	config.SetPath()
+	config.SetMainFile("main.cpp")
+	config.SetTestPath("")
+
+	fmt.Printf("________Created_project_%s________\n\n", projectName)
+	config.display()
+	jsonFile, err := json.Marshal(config)
+	if err != nil {
+		return err
+	}
+
+	configFile.Write(jsonFile)
+	return nil
 }
 
 func ConfigUpdate(conf *Config) error {
