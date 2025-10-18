@@ -17,6 +17,8 @@ type Config struct {
 	TestPath string `json:"test-path"`
 }
 
+// Config Setters
+
 func (conf *Config) SetName(name string) {
 	conf.Name = name
 }
@@ -43,6 +45,8 @@ func (conf *Config) SetPath() {
 	conf.Path = path + "/" + conf.Name
 }
 
+// Conifg Getters
+
 func (conf *Config) GetName() string {
 	return conf.Name
 }
@@ -63,7 +67,9 @@ func (conf *Config) GetTestPath() string {
 	return conf.TestPath
 }
 
-func (conf Config) display() {
+// Config Methods
+
+func (conf *Config) display() {
 	if conf.TestPath == "" {
 		fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetCompiler(), conf.GetPath())
 		return
@@ -71,6 +77,44 @@ func (conf Config) display() {
 
 	fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| test file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetTestPath(), conf.GetCompiler(), conf.GetPath())
 }
+
+func (conf *Config) CreateTest() error {
+	conf.SetTestPath(filepath.Join(conf.GetPath(), "test/test.cpp"))
+	err := os.Mkdir(conf.GetTestPath(), 0777)
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(conf.GetTestPath())
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write([]byte(BaseTestCppFile))
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Test file succesfully created at: ", conf.GetTestPath())
+
+	return nil
+}
+
+func (conf *Config) Update() error {
+	textUpdate, err := json.Marshal(conf)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(filepath.Join(conf.GetPath(), "config.json"), textUpdate, 0777)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Functions with Config
 
 func ConfigExists() (bool, string) {
 	file := "config.json"
@@ -138,15 +182,14 @@ func CreateConfig(projectName string) error {
 	return nil
 }
 
-func ConfigUpdate(conf *Config) error {
-	textUpdate, err := json.Marshal(conf)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(filepath.Join(conf.GetPath(), "config.json"), textUpdate, 0777)
-	if err != nil {
-		return err
+func GetConfig() *Config {
+
+	isEx, configPath := ConfigExists()
+	if !isEx {
+		fmt.Println("Error: config file does not exist")
+		os.Exit(1)
 	}
 
-	return nil
+	config := ReadConfig(configPath)
+	return config
 }

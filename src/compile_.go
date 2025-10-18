@@ -3,19 +3,27 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 )
 
-const baseCppFile string = "#include <iostream>\n\nint main()\n{\n\tstd::cout << " + `"Hello, World!"` + "<< std::endl;\n\treturn 0;\n}\n"
-
 func DefaultCppFile(file *os.File) error {
 	defer file.Close()
-	_, err := file.Write([]byte(baseCppFile))
+	_, err := file.Write([]byte(BaseCppFile))
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func Execute(command string, attributes ...string) error {
+	cmd := exec.Command(command, attributes...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	return err
 }
 
 func notCfile(filename string) bool {

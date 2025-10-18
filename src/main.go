@@ -9,10 +9,7 @@ import (
 func main() {
 	argv := os.Args
 	argc := len(argv)
-	if argc < 2 {
-		fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
-		return
-	}
+	ArgsCheck(argc, 2)
 
 	switch argv[1] {
 	case "help":
@@ -25,46 +22,30 @@ func main() {
 			fmt.Println("|                                                                                                             'name' allows you change name for your project(doesn't change directory name)")
 			fmt.Println("|                                                                                                             'compiler' allows you change compiler for your project")
 			fmt.Println("|                                                                                                             'path' updates path to current")
-			fmt.Println("| test <run/path> < /full_path_to_test> you can create your test(but only with main function. You can find example in readme file)")
+			fmt.Println("| test <create/run/path> < / /full_path_to_test> you can create your test(but only with main function. You can find example in readme file)")
+			fmt.Println("|                                                'create' creates base test file with default path: <project>/test/test.cpp")
 			fmt.Println("|                                       'path' + <full_path_to_test> you can include test from another file")
 		}
 
 	case "new":
-		if argc < 3 {
-			fmt.Println("Error: missing arguments for 'new'\n| try:   $ cls help new    for more information")
-			return
-		}
+		ArgsCheck(argc, 3)
 
 		err := os.Mkdir(argv[2], 0777)
-		if err != nil {
-			fmt.Println("Error: cannot create directory ", err)
-			return
-		}
+		DirCreationCheck(err)
 
 		srcPath := argv[2] + "/src"
 		err = os.Mkdir(srcPath, 0777)
-		if err != nil {
-			fmt.Println("Error: cannot create directory ", err)
-			return
-		}
+		DirCreationCheck(err)
 
 		mainPath := srcPath + "/main.cpp"
 		mainFile, err := os.Create(mainPath)
-		if err != nil {
-			fmt.Println("Error: cannot create file ", err)
-			return
-		}
+		CreationCheck(err)
 
 		err = DefaultCppFile(mainFile)
-		if err != nil {
-			fmt.Println("Error: cannot create default code: ", err)
-			return
-		}
+		DefaultCodeCheck(err)
+
 		err = CreateConfig(argv[2])
-		if err != nil {
-			fmt.Println("Error: cannot create default configuration: ", err)
-			return
-		}
+		ConfigCreationCheck(err)
 
 	case "build":
 
@@ -75,84 +56,54 @@ func main() {
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 
-			go func() {
-				fmt.Println("Compiling...")
-			}()
+			fmt.Println("Compiling...")
 
 			err := cmd.Run()
-			if err != nil {
-				fmt.Println("Compile error: ", err)
-				os.Exit(1)
-			}
-
+			CompilationCheck(err)
 			break
 		}
 
 		//building for project
 		fmt.Println("\n\n ____________Finging_config.json..._______")
-		isEx, configPath := ConfigExists()
-		if !isEx {
-			fmt.Println("Error: config file does not exist")
-			return
-		}
-		fmt.Println("| config file found at ", configPath)
+
+		config := GetConfig()
+
+		fmt.Println("| config file found at ", config.GetPath())
 		fmt.Println("| Reading configuration file...\n|_________________________________________\n")
-		config := ReadConfig(configPath)
+
 		files := GetFiles(string(config.GetPath() + "/src"))
+
 		PrintAllFiles(&files)
+
 		files = append(files, "-o", config.GetName())
-		cmd := exec.Command(config.GetCompiler(), files...)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
 
 		fmt.Println("\n\nCompiling project...")
+		// Compilation
+		err := Execute(config.GetCompiler(), files...)
+		CompilationCheck(err)
 
-		err := cmd.Run()
-		if err != nil {
-			fmt.Println("Compile error: ", err)
-			os.Exit(1)
-		}
-
-		move := exec.Command("mv", config.GetName(), config.GetPath())
-		err = move.Run()
-		if err != nil {
-			fmt.Println("Compile error: ", err)
-			os.Exit(1)
-		}
+		// move to root dir
+		err = Execute("mv", config.GetName(), config.GetPath())
+		CompilationCheck(err)
 
 		fmt.Printf("\n ____________Compilation_ complete!__________\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
 
 	case "config":
-		if argc < 3 {
-			fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
-			return
-		}
+		ArgsCheck(argc, 3)
 
-		isEx, configPath := ConfigExists()
-		if !isEx {
-			fmt.Println("Error: config file does not exist")
-			return
-		}
-
-		config := ReadConfig(configPath)
+		config := GetConfig()
 		switch argv[2] {
 		case "show":
 			config.display()
 
 		case "name":
-			if argc < 4 {
-				fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
-				return
-			}
+			ArgsCheck(argc, 4)
 
 			config.Name = argv[3]
 			fmt.Println("Project's name succesfully updated")
 
 		case "compiler":
-			if argc < 4 {
-				fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
-				return
-			}
+			ArgsCheck(argc, 4)
 
 			config.Compiler = argv[3]
 			fmt.Println("Project's compiler succesfully updated")
@@ -163,32 +114,42 @@ func main() {
 
 		default:
 			fmt.Println("Error: unknown argument for 'config'\n| try    $ cls help   for more information")
-			return
+			os.Exit(1)
 		}
-		err := ConfigUpdate(config)
-		if err != nil {
-			panic(err)
-		}
+		err := config.Update()
+		UpdateCheck(err)
 
 	case "test":
-		if argc < 3 {
-			fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
-			return
-		}
+		ArgsCheck(argc, 3)
 
 		switch argv[2] {
+
+		case "create":
+
+			config := GetConfig()
+			err := config.CreateTest()
+			CreationCheck(err)
+
+			err = config.Update()
+			UpdateCheck(err)
+
 		case "run":
 
 		case "path":
-			if argc < 4 {
-				fmt.Println("Error: missing arguments\n| try:   $ cls help    for more information")
-				return
-			}
+			ArgsCheck(argc, 4)
+
+			config := GetConfig()
+			config.SetTestPath(argv[3])
+			err := config.Update()
+			UpdateCheck(err)
+
 		default:
 			fmt.Println("Error: unknown argument for 'test'\n| try    $ cls help   for more information")
+			os.Exit(1)
 		}
 
 	default:
 		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")
+		os.Exit(1)
 	}
 }
