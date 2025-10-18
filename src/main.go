@@ -83,8 +83,10 @@ func main() {
 		CompilationCheck(err)
 
 		// move to root dir
-		err = Execute("mv", config.GetName(), config.GetPath())
-		CompilationCheck(err)
+		if config.ExeNInRoot() {
+			err = Execute("mv", config.GetName(), config.GetPath())
+			CompilationCheck(err)
+		}
 
 		fmt.Printf("\n ____________Compilation_ complete!__________\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
 

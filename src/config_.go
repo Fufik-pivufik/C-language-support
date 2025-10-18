@@ -78,6 +78,12 @@ func (conf *Config) display() {
 	fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| test file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetTestPath(), conf.GetCompiler(), conf.GetPath())
 }
 
+func (conf *Config) ExeNInRoot() bool {
+	_, err := os.Stat(filepath.Join(conf.GetPath(), conf.GetName()))
+	currentPath, _ := os.Getwd()
+	return errors.Is(err, os.ErrNotExist) || currentPath != conf.GetPath()
+}
+
 func (conf *Config) CreateTest() error {
 	conf.SetTestPath(filepath.Join(conf.GetPath(), "test/test.cpp"))
 	err := os.Mkdir(conf.GetTestPath(), 0777)
