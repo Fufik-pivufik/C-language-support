@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import ()
 
 func ParseInputCompile(result []string) []string {
 	outputfile := result[len(result)-1]
@@ -19,14 +17,6 @@ func ParseInputCompile(result []string) []string {
 	return result
 }
 
-func PrintAllFiles(files *[]string) {
-	fmt.Println(" _______________Found_files_______________")
-	for i, file := range *files {
-		fmt.Println("| ", i+1, " ", GetFileName(file))
-	}
-	fmt.Println("|_________________________________________")
-}
-
 func GetFileName(filepath string) string {
 	result := ""
 
@@ -35,6 +25,23 @@ func GetFileName(filepath string) string {
 			result = ""
 		} else {
 			result += string(char)
+		}
+	}
+
+	return result
+}
+
+func GetDirPath(filepath string) string {
+	result := ""
+	str := ""
+
+	for _, char := range filepath {
+		if char == '/' {
+			str += string(char)
+			result += str
+			str = ""
+		} else {
+			str += string(char)
 		}
 	}
 

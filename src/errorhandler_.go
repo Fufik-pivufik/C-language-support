@@ -12,23 +12,30 @@ func ArgsCheck(argc int, val int) {
 	}
 }
 
+func TestExistCheck(config *Config) {
+	if config.GetTestPath() == "" {
+		fmt.Println("| Error: test file does not exists")
+		os.Exit(1)
+	}
+}
+
 func UpdateCheck(err error) {
 	if err != nil {
-		fmt.Println("Error config update: ", err)
+		fmt.Println("| Error config update: ", err)
 		os.Exit(1)
 	}
 }
 
 func CreationCheck(err error) {
 	if err != nil {
-		fmt.Println("Error: Failed to create file: ", err)
+		fmt.Println("| Error: Failed to create file: ", err)
 		os.Exit(1)
 	}
 }
 
 func DirCreationCheck(err error) {
 	if err != nil {
-		fmt.Println("Error: cannot create directory ", err)
+		fmt.Println("| Error: cannot create directory ", err)
 		os.Exit(1)
 	}
 
@@ -36,21 +43,21 @@ func DirCreationCheck(err error) {
 
 func CompilationCheck(err error) {
 	if err != nil {
-		fmt.Println("Compile error: ", err)
+		fmt.Println("| Compile error: ", err)
 		os.Exit(1)
 	}
 }
 
 func DefaultCodeCheck(err error) {
 	if err != nil {
-		fmt.Println("Error: cannot create default code: ", err)
+		fmt.Println("| Error: cannot create default code: ", err)
 		os.Exit(1)
 	}
 }
 
 func ConfigCreationCheck(err error) {
 	if err != nil {
-		fmt.Println("Error: cannot create default configuration: ", err)
+		fmt.Println("| Error: cannot create default configuration: ", err)
 		os.Exit(1)
 	}
 }

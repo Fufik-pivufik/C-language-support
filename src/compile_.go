@@ -55,3 +55,14 @@ func GetFiles(srcPath string) []string {
 
 	return result
 }
+
+func FindMainFile(files *[]string, mainname *string) int {
+
+	for i, file := range *files {
+		if GetFileName(file) == *mainname {
+			return i
+		}
+	}
+
+	return -1
+}

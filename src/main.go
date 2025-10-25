@@ -78,10 +78,15 @@ func main() {
 		files := GetFiles(string(config.GetPath() + "/src"))
 
 		PrintAllFiles(&files)
-
 		files = append(files, "-o", config.GetName())
 
-		fmt.Println("\n\nCompiling project...")
+		if config.MainLangCPP() && config.GetCompiler() == "g++" {
+			standart := "-std=" + config.GetCXXversion()
+			files = append(files, standart)
+		}
+
+		fmt.Println("\n\n\t\tCompiling project...")
+
 		// Compilation
 		err := Execute(config.GetCompiler(), files...)
 		CompilationCheck(err)
@@ -92,7 +97,7 @@ func main() {
 			CompilationCheck(err)
 		}
 
-		fmt.Printf("\n ____________Compilation_ complete!__________\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
+		fmt.Printf("\n _______Compilation_ complete!_______\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
 
 	case "config":
 		ArgsCheck(argc, 3)
@@ -111,15 +116,20 @@ func main() {
 		case "compiler":
 			ArgsCheck(argc, 4)
 
-			config.Compiler = argv[3]
+			config.SetCompiler(argv[3])
 			fmt.Println("Project's compiler succesfully updated")
+
+		case "std":
+			ArgsCheck(argc, 4)
+			config.SetCXXversion(argv[3])
+			fmt.Println("Compiler standart succesfully updated")
 
 		case "path":
 			config.SetPath()
 			fmt.Println("Path to project succesfully updated")
 
 		default:
-			fmt.Println("Error: unknown argument for 'config'\n| try    $ cls help   for more information")
+			fmt.Println("| Error: unknown argument for 'config'\n| try    $ cls help   for more information")
 			os.Exit(1)
 		}
 		err := config.Update()
@@ -140,7 +150,30 @@ func main() {
 			UpdateCheck(err)
 
 		case "run":
+			config := GetConfig()
+			TestExistCheck(config)
 
+			files := GetFiles(string(config.GetPath() + "/src"))
+			mainFile := config.GetMainFile()
+			mainIndx := FindMainFile(&files, &mainFile)
+			files[mainIndx] = config.GetTestPath()
+
+			PrintAllFiles(&files)
+			files = append(files, "-o", "test_outputxyz")
+
+			if config.MainLangCPP() && config.GetCompiler() == "g++" {
+				standart := "-std=" + config.GetCXXversion()
+				files = append(files, standart)
+			}
+
+			err := Execute(config.GetCompiler(), files...)
+			CompilationCheck(err)
+
+			err = Execute("./test_outputxyz")
+			CompilationCheck(err)
+
+			err = Execute("rm", "test_outputxyz")
+			CompilationCheck(err)
 		case "path":
 			ArgsCheck(argc, 4)
 
@@ -150,12 +183,12 @@ func main() {
 			UpdateCheck(err)
 
 		default:
-			fmt.Println("Error: unknown argument for 'test'\n| try    $ cls help   for more information")
+			fmt.Println("| Error: unknown argument for 'test'\n| try    $ cls help   for more information")
 			os.Exit(1)
 		}
 
 	default:
-		fmt.Println("Error: unknown argument\n| try   $ cls help    for more information")
+		fmt.Println("| Error: unknown argument\n| try   $ cls help    for more information")
 		os.Exit(1)
 	}
 }

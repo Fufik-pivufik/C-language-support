@@ -13,6 +13,7 @@ type Config struct {
 	Name     string `json:"name"`
 	MainFile string `json:"main-file"`
 	Compiler string `json:"compiler"`
+	CXXstd   string `json:"c++ standart"`
 	Path     string `json:"path"`
 	TestPath string `json:"test-path"`
 }
@@ -35,6 +36,10 @@ func (conf *Config) SetTestPath(filepath string) {
 	conf.TestPath = filepath
 }
 
+func (conf *Config) SetCXXversion(standart string) {
+	conf.CXXstd = standart
+}
+
 func (conf *Config) SetPath() {
 	path, err := os.Getwd()
 	if err != nil {
@@ -55,6 +60,10 @@ func (conf *Config) GetCompiler() string {
 	return conf.Compiler
 }
 
+func (conf *Config) GetCXXversion() string {
+	return conf.CXXstd
+}
+
 func (conf *Config) GetPath() string {
 	return conf.Path
 }
@@ -69,13 +78,25 @@ func (conf *Config) GetTestPath() string {
 
 // Config Methods
 
+func (conf *Config) MainLangCPP() bool {
+	result := ""
+	for _, ch := range conf.GetMainFile() {
+		if ch == '.' {
+			result = ""
+		}
+
+		result += string(ch)
+	}
+	return result == ".cpp"
+}
+
 func (conf *Config) display() {
 	if conf.TestPath == "" {
-		fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetCompiler(), conf.GetPath())
+		fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| compiler: %s\n| standart c++: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetCompiler(), conf.GetCXXversion(), conf.GetPath())
 		return
 	}
 
-	fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| test file: %s\n| compiler: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetTestPath(), conf.GetCompiler(), conf.GetPath())
+	fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| test file: %s\n| compiler: %s\n| standart c++: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetTestPath(), conf.GetCompiler(), conf.GetCXXversion(), conf.GetPath())
 }
 
 func (conf *Config) ExeNInRoot() bool {
@@ -86,7 +107,7 @@ func (conf *Config) ExeNInRoot() bool {
 
 func (conf *Config) CreateTest() error {
 	conf.SetTestPath(filepath.Join(conf.GetPath(), "test/test.cpp"))
-	err := os.Mkdir(conf.GetTestPath(), 0777)
+	err := os.Mkdir(GetDirPath(conf.GetTestPath()), 0777)
 	if err != nil {
 		return err
 	}
@@ -173,6 +194,7 @@ func CreateConfig(projectName string) error {
 	// default configuration for project
 	config.SetName(projectName)
 	config.SetCompiler("g++")
+	config.SetCXXversion("c++20")
 	config.SetPath()
 	config.SetMainFile("main.cpp")
 	config.SetTestPath("")
@@ -192,7 +214,7 @@ func GetConfig() *Config {
 
 	isEx, configPath := ConfigExists()
 	if !isEx {
-		fmt.Println("Error: config file does not exist")
+		fmt.Println("| Error: config file does not exist")
 		os.Exit(1)
 	}
 
