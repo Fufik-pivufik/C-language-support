@@ -45,7 +45,7 @@ cls help # command for view all options
 cls new <project_name> # this commad creates a simple hello world app with basic structure
 ```
 ![new](./.pics/new.png)
-
+![struct](./.pics/structure.png)
 
 
 ```bash
@@ -54,5 +54,9 @@ cls build # this command builds all your cpp files in src
 ![build](./.pics/new.png)
 
 
+```bash
+cls config <show/<field name>> [changed feild containment] # shows current configuration or changes picked field's containment
+```
+![config](./.pics/config.png)
 
 
