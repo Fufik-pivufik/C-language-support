@@ -1,10 +1,10 @@
-## CLS(C Language Support)
+# CLS(C Language Support)
 Current verion v0.001 alpha
 
 This is a little cli application for make c/c++ experience more comfortable.
 This application i made mostly for myself and for few of my friends. So don't expect much
 
-# Installation
+## Installation
 I didn't use any librares so you just need to install golang
 Debian/Ubuntu
 ```bash
@@ -29,6 +29,7 @@ And then check
 ```bash
 cls version
 ```
+
 
 
 
