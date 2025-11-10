@@ -36,12 +36,15 @@ When you did all previous steps you can use *cls*
 ```bash
 cls help # command for view all options
 ```
+![help](./.pics/help.png)
+
 ```bash
 cls new <project_name> # this commad creates a simple hello world app with basic structure
 ```
 ```bash
 cls build # this command builds all your cpp files in src 
 ```
+
 
 
 
