@@ -51,7 +51,7 @@ cls new <project_name> # this commad creates a simple hello world app with basic
 ```bash
 cls build # this command builds all your cpp files in src 
 ```
-![build](./.pics/new.png)
+![build](./.pics/build.png)
 
 
 ```bash
