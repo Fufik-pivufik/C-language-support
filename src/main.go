@@ -122,7 +122,7 @@ func main() {
 		case "std":
 			ArgsCheck(argc, 4)
 			config.SetCXXversion(argv[3])
-			fmt.Println("Compiler standart succesfully updated")
+			fmt.Println("Language standart succesfully updated")
 
 		case "path":
 			config.SetPath()

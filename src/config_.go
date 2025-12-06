@@ -47,7 +47,7 @@ func (conf *Config) SetPath() {
 		return
 	}
 
-	conf.Path = path + "/" + conf.Name
+	conf.Path = path
 }
 
 // Conifg Getters
@@ -145,7 +145,7 @@ func (conf *Config) Update() error {
 
 func ConfigExists() (bool, string) {
 	file := "config.json"
-	var err error = os.ErrNotExist
+	err := os.ErrNotExist
 	home, _ := os.UserHomeDir()
 	home, _ = filepath.Abs(home)
 	lastPath := ""
