@@ -45,5 +45,5 @@ func GetDirPath(filepath string) string {
 		}
 	}
 
-	return result
+	return result[:len(result)-1]
 }

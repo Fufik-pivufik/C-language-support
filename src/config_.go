@@ -32,10 +32,6 @@ func (conf *Config) SetMainFile(filename string) {
 	conf.MainFile = filename
 }
 
-func (conf *Config) SetTestPath(filepath string) {
-	conf.TestPath = filepath
-}
-
 func (conf *Config) SetCXXversion(standart string) {
 	conf.CXXstd = standart
 }
@@ -47,7 +43,7 @@ func (conf *Config) SetPath() {
 		return
 	}
 
-	conf.Path = path + "/" + conf.Name
+	conf.Path = filepath.Join(path, conf.GetName())
 }
 
 // Conifg Getters
@@ -106,7 +102,7 @@ func (conf *Config) ExeNInRoot() bool {
 }
 
 func (conf *Config) CreateTest() error {
-	conf.SetTestPath(filepath.Join(conf.GetPath(), "test/test.cpp"))
+	conf.TestPath = filepath.Join(conf.GetPath(), "test/test.cpp")
 	err := os.Mkdir(GetDirPath(conf.GetTestPath()), 0777)
 	if err != nil {
 		return err
@@ -197,7 +193,7 @@ func CreateConfig(projectName string) error {
 	config.SetCXXversion("c++20")
 	config.SetPath()
 	config.SetMainFile("main.cpp")
-	config.SetTestPath("")
+	config.TestPath = ""
 
 	fmt.Printf("________Created_project_%s________\n\n", projectName)
 	config.display()
@@ -219,5 +215,6 @@ func GetConfig() *Config {
 	}
 
 	config := ReadConfig(configPath)
+	config.Path = GetDirPath(configPath)
 	return config
 }
