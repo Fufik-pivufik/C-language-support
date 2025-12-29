@@ -124,10 +124,6 @@ func main() {
 			config.SetCXXversion(argv[3])
 			fmt.Println("Language standart succesfully updated")
 
-		case "path":
-			config.SetPath()
-			fmt.Println("Path to project succesfully updated")
-
 		default:
 			fmt.Println("| Error: unknown argument for 'config'\n| try    $ cls help   for more information")
 			os.Exit(1)
@@ -174,13 +170,13 @@ func main() {
 
 			err = Execute("rm", "test_outputxyz")
 			CompilationCheck(err)
-		case "path":
-			ArgsCheck(argc, 4)
-
-			config := GetConfig()
-			config.SetTestPath(argv[3])
-			err := config.Update()
-			UpdateCheck(err)
+		// case "path":
+		// 	ArgsCheck(argc, 4)
+		//
+		// 	config := GetConfig()
+		// 	config.SetTestPath(argv[3])
+		// 	err := config.Update()
+		// 	UpdateCheck(err)
 
 		default:
 			fmt.Println("| Error: unknown argument for 'test'\n| try    $ cls help   for more information")

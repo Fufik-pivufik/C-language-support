@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo Compiling cls...
 go build src/compile_.go src/config_.go src/decorations_.go src/main.go src/text_.go ./src/basecont_.go ./src/errorhandler_.go 
-mv compile_ /usr/bin/cls
+
+echo Compilation done!
+echo Moving executable file to /bin/
+sudo mv compile_ /usr/bin/cls
 
