@@ -129,7 +129,7 @@ func (conf *Config) Update() error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(filepath.Join(conf.GetPath(), "config.json"), textUpdate, 0777)
+	err = os.WriteFile(filepath.Join(conf.GetPath(), "cls.json"), textUpdate, 0777)
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func (conf *Config) Update() error {
 // Functions with Config
 
 func ConfigExists() (bool, string) {
-	file := "config.json"
+	file := "cls.json"
 	var err error = os.ErrNotExist
 	home, _ := os.UserHomeDir()
 	home, _ = filepath.Abs(home)
@@ -178,7 +178,7 @@ func ReadConfig(path string) *Config {
 }
 
 func CreateConfig(projectName string) error {
-	configPath := projectName + "/config.json"
+	configPath := projectName + "/cls.json"
 	configFile, err := os.Create(configPath)
 	if err != nil {
 		return err
@@ -216,5 +216,6 @@ func GetConfig() *Config {
 
 	config := ReadConfig(configPath)
 	config.Path = GetDirPath(configPath)
+	config.TestPath = filepath.Join(config.GetPath(), "test/test.cpp")
 	return config
 }
