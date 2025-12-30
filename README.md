@@ -23,7 +23,7 @@ And then you could
 ```bash
 git clone https://github.com/Fufik-pivufik/C-language-support
 cd C-languange-support
-sudo ./install # sudo for move bin to /usr/bin dir
+./install
 ```
 And then check 
 ```bash
@@ -58,5 +58,6 @@ cls build # this command builds all your cpp files in src
 cls config <show/<field name>> [changed feild containment] # shows current configuration or changes picked field's containment
 ```
 ![config](./.pics/config.png)
+
 
 
