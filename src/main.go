@@ -19,13 +19,13 @@ func main() {
 			fmt.Println("| new <project_name>   creates new directory with simple structure and default hello world app:")
 			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|")
 			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
-			fmt.Println("| config <show/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself, 'show' shows current configuration")
-			fmt.Println("|                                                                                                             'name' allows you change name for your project(doesn't change directory name)")
-			fmt.Println("|                                                                                                             'compiler' allows you change compiler for your project")
-			fmt.Println("|                                                                                                             'path' updates path to current")
-			fmt.Println("| test <create/run/path> < / /full_path_to_test> you can create your test(but only with main function. You can find example in readme file)")
-			fmt.Println("|                                                'create' creates base test file with default path: <project>/test/test.cpp")
-			fmt.Println("|                                       'path' + <full_path_to_test> you can include test from another file")
+			fmt.Println("| config <show/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself\n|            'show' shows current configuration")
+			fmt.Println("|            'name' allows you change name for your project(doesn't change directory name)")
+			fmt.Println("|            'compiler' allows you change compiler for your project")
+			fmt.Println("|            'path' updates path to current")
+			fmt.Println("| test <create/run/path> < / /full_path_to_test> you can create your test(but only with main function.)")
+			fmt.Println("|            'create' creates base test file with default path: <project>/test/test.cpp")
+			fmt.Println("|            'path' + <full_path_to_test> you can include test from another file")
 		}
 
 	case "version":
