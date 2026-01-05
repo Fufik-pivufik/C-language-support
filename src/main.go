@@ -41,6 +41,10 @@ func main() {
 		err = os.Mkdir(srcPath, 0777)
 		DirCreationCheck(err)
 
+		headPath := argv[2] + "/headers"
+		err = os.Mkdir(headPath, 0777)
+		DirCreationCheck(err)
+
 		mainPath := srcPath + "/main.cpp"
 		mainFile, err := os.Create(mainPath)
 		CreationCheck(err)
