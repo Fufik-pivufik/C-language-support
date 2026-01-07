@@ -8,6 +8,19 @@ import (
 
 func main() {
 	argv := os.Args
+	flags := []byte{}
+
+	for i := 0; i < len(argv); {
+		if argv[i][0] == '-' {
+			flags = append(flags, argv[i][1])
+			argv = append(argv[:i], argv[i+1:]...)
+		} else if len(flags) > 0 {
+			break
+		} else {
+			i++
+		}
+	}
+
 	argc := len(argv)
 	ArgsCheck(argc, 2)
 
@@ -61,7 +74,16 @@ func main() {
 		CompilationCheck(err)
 
 	case "build", "run":
+		displ := true
 
+		for _, flag := range flags {
+			switch flag {
+			case 'h':
+				displ = false
+			default:
+				fmt.Println("Unknown flag: -", flag)
+			}
+		}
 		// compiling lsit of files
 		// if argc > 2 && argv[1] == "build" {
 		// 	compileArgs := ParseInputCompile(os.Args[2:])
@@ -77,24 +99,30 @@ func main() {
 		// }
 
 		//building for project
-		fmt.Println("\n\n ____________Finging_config.json..._______")
+		if displ {
+			fmt.Println("\n\n ____________Finging_config.json..._______")
+		}
 
 		config := GetConfig()
-
-		fmt.Println("| config file found at ", config.GetPath())
-		fmt.Println("| Reading configuration file...\n|_________________________________________\n")
+		if displ {
+			fmt.Println("| config file found at ", config.GetPath())
+			fmt.Println("| Reading configuration file...\n|_________________________________________\n")
+		}
 
 		files := GetFiles(string(config.GetPath() + "/src"))
 
-		PrintAllFiles(&files)
+		if displ {
+			PrintAllFiles(&files)
+		}
 		files = append(files, "-o", config.GetName())
 
 		if config.MainLangCPP() && config.GetCompiler() == "g++" {
 			standart := "-std=" + config.GetCXXversion()
 			files = append(files, standart)
 		}
-
-		fmt.Println("\n\n\t\tCompiling project...")
+		if displ {
+			fmt.Println("\n\n\t\tCompiling project...")
+		}
 
 		// Compilation
 		err := Execute(true, config.GetCompiler(), files...)
@@ -107,7 +135,9 @@ func main() {
 		}
 
 		if argv[1] == "build" {
-			fmt.Printf("\n _______Compilation_ complete!_______\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
+			if displ {
+				fmt.Printf("\n _______Compilation_ complete!_______\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
+			}
 		} else {
 			err := Execute(true, config.GetPath()+"/"+config.GetName(), argv[2:]...)
 			CompilationCheck(err)
