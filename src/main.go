@@ -51,6 +51,9 @@ func main() {
 		err = CreateConfig(argv[2])
 		ConfigCreationCheck(err)
 
+		err = Execute("git", "init")
+		CompilationCheck(err)
+
 	case "build":
 
 		// compiling lsit of files
