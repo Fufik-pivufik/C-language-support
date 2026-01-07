@@ -51,7 +51,7 @@ func main() {
 		err = CreateConfig(argv[2])
 		ConfigCreationCheck(err)
 
-		err = Execute("git", "init")
+		err = Execute(false, "git", "init", argv[2])
 		CompilationCheck(err)
 
 	case "build":
@@ -91,12 +91,12 @@ func main() {
 		fmt.Println("\n\n\t\tCompiling project...")
 
 		// Compilation
-		err := Execute(config.GetCompiler(), files...)
+		err := Execute(true, config.GetCompiler(), files...)
 		CompilationCheck(err)
 
 		// move to root dir
 		if config.ExeNInRoot() {
-			err = Execute("mv", config.GetName(), config.GetPath())
+			err = Execute(true, "mv", config.GetName(), config.GetPath())
 			CompilationCheck(err)
 		}
 
@@ -165,13 +165,13 @@ func main() {
 				files = append(files, standart)
 			}
 
-			err := Execute(config.GetCompiler(), files...)
+			err := Execute(true, config.GetCompiler(), files...)
 			CompilationCheck(err)
 
-			err = Execute("./test_outputxyz")
+			err = Execute(true, "./test_outputxyz")
 			CompilationCheck(err)
 
-			err = Execute("rm", "test_outputxyz")
+			err = Execute(true, "rm", "test_outputxyz")
 			CompilationCheck(err)
 		// case "path":
 		// 	ArgsCheck(argc, 4)

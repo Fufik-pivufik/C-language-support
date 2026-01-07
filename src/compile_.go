@@ -17,10 +17,13 @@ func DefaultCppFile(file *os.File) error {
 	return nil
 }
 
-func Execute(command string, attributes ...string) error {
+func Execute(display bool, command string, attributes ...string) error {
 	cmd := exec.Command(command, attributes...)
-	cmd.Stdout = os.Stdout
+	if display {
+		cmd.Stdout = os.Stdout
+	}
 	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
 
 	err := cmd.Run()
 	return err
