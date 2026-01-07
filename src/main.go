@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
+	// "os/exec"
 )
 
 func main() {
@@ -15,15 +15,17 @@ func main() {
 	case "help":
 		if argc < 3 {
 			fmt.Println("_______________________cls_options______________________")
-			fmt.Println("| version              shows current cls version\n|")
-			fmt.Println("| new <project_name>   creates new directory with simple structure and default hello world app:")
+			fmt.Println("| 'version'              shows current cls version\n|")
+			fmt.Println("| 'new <project_name>'   creates new directory with simple structure and default hello world app:")
 			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|")
-			fmt.Println("| build [list of C/CPP files] [output file name]  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
-			fmt.Println("| config <show/name/compiler/path> < /new_name/new_compiler/ > you don't have to edit config by  yourself\n|            'show' shows current configuration")
+			fmt.Println("| 'build'  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
+			fmt.Println("| 'run'    the same thing as build. Just runs executable file after building")
+			fmt.Println("|                                          ")
+			fmt.Println("| 'config <show/name/compiler> < /new_name/new_compiler>' you don't have to edit config by  yourself\n|            'show' shows current configuration")
 			fmt.Println("|            'name' allows you change name for your project(doesn't change directory name)")
 			fmt.Println("|            'compiler' allows you change compiler for your project")
-			fmt.Println("|            'path' updates path to current")
-			fmt.Println("| test <create/run/path> < / /full_path_to_test> you can create your test(but only with main function.)")
+			fmt.Println("|                                          ")
+			fmt.Println("| 'test <create/run/path> < / /full_path_to_test>' you can create your test(but only with main function.)")
 			fmt.Println("|            'create' creates base test file with default path: <project>/test/test.cpp")
 			fmt.Println("|            'path' + <full_path_to_test> you can include test from another file")
 		}
@@ -58,21 +60,21 @@ func main() {
 		err = Execute(false, "git", "init", argv[2])
 		CompilationCheck(err)
 
-	case "build":
+	case "build", "run":
 
 		// compiling lsit of files
-		if argc > 2 {
-			compileArgs := ParseInputCompile(os.Args[2:])
-			cmd := exec.Command("g++", compileArgs...)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-
-			fmt.Println("Compiling...")
-
-			err := cmd.Run()
-			CompilationCheck(err)
-			break
-		}
+		// if argc > 2 && argv[1] == "build" {
+		// 	compileArgs := ParseInputCompile(os.Args[2:])
+		// 	cmd := exec.Command("g++", compileArgs...)
+		// 	cmd.Stdout = os.Stdout
+		// 	cmd.Stderr = os.Stderr
+		//
+		// 	fmt.Println("Compiling...")
+		//
+		// 	err := cmd.Run()
+		// 	CompilationCheck(err)
+		// 	break
+		// }
 
 		//building for project
 		fmt.Println("\n\n ____________Finging_config.json..._______")
@@ -104,7 +106,12 @@ func main() {
 			CompilationCheck(err)
 		}
 
-		fmt.Printf("\n _______Compilation_ complete!_______\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
+		if argv[1] == "build" {
+			fmt.Printf("\n _______Compilation_ complete!_______\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
+		} else {
+			err := Execute(true, config.GetPath()+"/"+config.GetName(), argv[2:]...)
+			CompilationCheck(err)
+		}
 
 	case "config":
 		ArgsCheck(argc, 3)
