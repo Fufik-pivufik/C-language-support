@@ -60,6 +60,13 @@ func main() {
 		err = os.Mkdir(headPath, 0777)
 		DirCreationCheck(err)
 
+		hppPath := headPath + "/include.hpp"
+		hppFile, err := os.Create(hppPath)
+		CreationCheck(err)
+
+		err = DefaultHppFile(hppFile)
+		DefaultCodeCheck(err)
+
 		mainPath := srcPath + "/main.cpp"
 		mainFile, err := os.Create(mainPath)
 		CreationCheck(err)

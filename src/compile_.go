@@ -17,6 +17,15 @@ func DefaultCppFile(file *os.File) error {
 	return nil
 }
 
+func DefaultHppFile(file *os.File) error {
+	defer file.Close()
+	_, err := file.Write([]byte(BaseIncludeHPP))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func Execute(display bool, command string, attributes ...string) error {
 	cmd := exec.Command(command, attributes...)
 	if display {
