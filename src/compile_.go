@@ -26,6 +26,24 @@ func DefaultHppFile(file *os.File) error {
 	return nil
 }
 
+func DefaultHFile(file *os.File) error {
+	defer file.Close()
+	_, err := file.Write([]byte(BaseHFile))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DefaultCFile(file *os.File) error {
+	defer file.Close()
+	_, err := file.Write([]byte(BaseCFile))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func Execute(display bool, command string, attributes ...string) error {
 	cmd := exec.Command(command, attributes...)
 	if display {

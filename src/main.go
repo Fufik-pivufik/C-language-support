@@ -48,6 +48,15 @@ func main() {
 
 	case "new":
 		ArgsCheck(argc, 3)
+		Cproj := false
+		for _, flag := range flags {
+			switch flag {
+			case 'c':
+				Cproj = true
+			default:
+				fmt.Println("Unknown flag: -", flag)
+			}
+		}
 
 		err := os.Mkdir(argv[2], 0777)
 		DirCreationCheck(err)
@@ -60,21 +69,38 @@ func main() {
 		err = os.Mkdir(headPath, 0777)
 		DirCreationCheck(err)
 
-		hppPath := headPath + "/include.hpp"
-		hppFile, err := os.Create(hppPath)
-		CreationCheck(err)
+		if !Cproj {
 
-		err = DefaultHppFile(hppFile)
-		DefaultCodeCheck(err)
+			hppPath := headPath + "/include.hpp"
+			hppFile, err := os.Create(hppPath)
+			CreationCheck(err)
 
-		mainPath := srcPath + "/main.cpp"
-		mainFile, err := os.Create(mainPath)
-		CreationCheck(err)
+			err = DefaultHppFile(hppFile)
+			DefaultCodeCheck(err)
 
-		err = DefaultCppFile(mainFile)
-		DefaultCodeCheck(err)
+			mainPath := srcPath + "/main.cpp"
+			mainFile, err := os.Create(mainPath)
+			CreationCheck(err)
 
-		err = CreateConfig(argv[2])
+			err = DefaultCppFile(mainFile)
+			DefaultCodeCheck(err)
+		} else {
+			hPath := headPath + "/include.h"
+			hFile, err := os.Create(hPath)
+			CreationCheck(err)
+
+			err = DefaultHFile(hFile)
+			DefaultCodeCheck(err)
+
+			mainPath := srcPath + "/main.c"
+			mainFile, err := os.Create(mainPath)
+			CreationCheck(err)
+
+			err = DefaultCFile(mainFile)
+			DefaultCodeCheck(err)
+		}
+
+		err = CreateConfig(argv[2], Cproj)
 		ConfigCreationCheck(err)
 
 		err = Execute(false, "git", "init", argv[2])
@@ -123,7 +149,7 @@ func main() {
 		}
 		files = append(files, "-o", config.GetName())
 
-		if config.MainLangCPP() && config.GetCompiler() == "g++" {
+		if config.MainLangCPP() && config.GetCXXversion() != "" {
 			standart := "-std=" + config.GetCXXversion()
 			files = append(files, standart)
 		}

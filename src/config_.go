@@ -87,12 +87,17 @@ func (conf *Config) MainLangCPP() bool {
 }
 
 func (conf *Config) display() {
-	if conf.TestPath == "" {
-		fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| compiler: %s\n| standart c++: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetCompiler(), conf.GetCXXversion(), conf.GetPath())
-		return
+	fmt.Printf("________config:________\n")
+	fmt.Printf("| name: %s\n", conf.GetName())
+	fmt.Printf("| main file: %s\n", conf.GetMainFile())
+	fmt.Printf("| compiler: %s\n", conf.GetCompiler())
+	if !(conf.GetCXXversion() == "") {
+
+		fmt.Printf("| standart c++: %s\n", conf.GetCXXversion())
 	}
 
-	fmt.Printf("________config:________\n| name: %s\n| main file: %s\n| test file: %s\n| compiler: %s\n| standart c++: %s\n| path: %s\n", conf.GetName(), conf.GetMainFile(), conf.GetTestPath(), conf.GetCompiler(), conf.GetCXXversion(), conf.GetPath())
+	fmt.Printf("| path: %s\n", conf.GetPath())
+
 }
 
 func (conf *Config) ExeNInRoot() bool {
@@ -114,7 +119,7 @@ func (conf *Config) CreateTest() error {
 	}
 	defer file.Close()
 
-	_, err = file.Write([]byte(BaseTestCppFile))
+	_, err = file.Write([]byte(BaseTestFile))
 	if err != nil {
 		return err
 	}
@@ -177,7 +182,7 @@ func ReadConfig(path string) *Config {
 	return &result
 }
 
-func CreateConfig(projectName string) error {
+func CreateConfig(projectName string, isC bool) error {
 	configPath := projectName + "/cls.json"
 	configFile, err := os.Create(configPath)
 	if err != nil {
@@ -189,10 +194,17 @@ func CreateConfig(projectName string) error {
 
 	// default configuration for project
 	config.SetName(projectName)
-	config.SetCompiler("g++")
-	config.SetCXXversion("c++20")
+	if isC {
+
+		config.SetCompiler("gcc")
+		config.SetCXXversion("")
+		config.SetMainFile("main.c")
+	} else {
+		config.SetCompiler("g++")
+		config.SetCXXversion("c++20")
+		config.SetMainFile("main.cpp")
+	}
 	config.SetPath()
-	config.SetMainFile("main.cpp")
 	config.TestPath = ""
 
 	fmt.Printf("________Created_project_%s________\n\n", projectName)
