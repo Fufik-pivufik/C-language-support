@@ -13,6 +13,11 @@ func main() {
 	for i := 0; i < len(argv); {
 		if argv[i][0] == '-' {
 			flags = append(flags, argv[i][1])
+			if argv[i][1] == 'v' {
+				fmt.Printf("C language support(cls) %s\n", Version)
+				os.Exit(0)
+			}
+
 			argv = append(argv[:i], argv[i+1:]...)
 		} else if len(flags) > 0 {
 			break
@@ -44,7 +49,7 @@ func main() {
 		}
 
 	case "version":
-		fmt.Printf("| cls %s\n", Version)
+		fmt.Printf("C language support(cls) %s\n", Version)
 
 	case "new":
 		ArgsCheck(argc, 3)
