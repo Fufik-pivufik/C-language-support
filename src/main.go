@@ -33,11 +33,14 @@ func main() {
 	case "help":
 		if argc < 3 {
 			fmt.Println("_______________________cls_options______________________")
-			fmt.Println("| 'version'              shows current cls version\n|")
+			fmt.Println("| 'version'/'-v'             shows current cls version\n|")
 			fmt.Println("| 'new <project_name>'   creates new directory with simple structure and default hello world app:")
-			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|")
+			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|\t\t\t                  headers/ -> include.hpp\n|\t\t\t                  cls.json\n|")
+			fmt.Println("| 'new <project_name> -c'   creates new directory with simple structure and default hello world app:")
+			fmt.Println("|\t\t\t<project_name> -> src/ -> main.c\n|\t\t\t                  headers/ -> include.h\n|\t\t\t                  cls.json\n|")
 			fmt.Println("| 'build'  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
 			fmt.Println("| 'run'    the same thing as build. Just runs executable file after building")
+			fmt.Println("| Flag '-h' for 'build' and 'run' hides all unneccessary information")
 			fmt.Println("|                                          ")
 			fmt.Println("| 'config <show/name/compiler> < /new_name/new_compiler>' you don't have to edit config by  yourself\n|            'show' shows current configuration")
 			fmt.Println("|            'name' allows you change name for your project(doesn't change directory name)")

@@ -228,6 +228,10 @@ func GetConfig() *Config {
 
 	config := ReadConfig(configPath)
 	config.Path = GetDirPath(configPath)
-	config.TestPath = filepath.Join(config.GetPath(), "test/test.cpp")
+	if config.MainFile[len(config.MainFile)-1] == 'c' {
+		config.TestPath = filepath.Join(config.GetPath(), "test/test.c")
+	} else {
+		config.TestPath = filepath.Join(config.GetPath(), "test/test.cpp")
+	}
 	return config
 }
