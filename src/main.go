@@ -49,6 +49,7 @@ func main() {
 			fmt.Println("| 'test <create/run/path> < / /full_path_to_test>' you can create your test(but only with main function.)")
 			fmt.Println("|            'create' creates base test file with default path: <project>/test/test.cpp")
 			fmt.Println("|            'path' + <full_path_to_test> you can include test from another file")
+			fmt.Println("| 'flag <add/remove> <flagname>' adds and removes flags for compilation")
 		}
 
 	case "version":

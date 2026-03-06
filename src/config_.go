@@ -15,6 +15,7 @@ type Config struct {
 	Compiler string `json:"compiler"`
 	CXXstd   string `json:"c++ standart"`
 	Path     string `json:"path"`
+	Flags	 []string `json:"flags"`
 	TestPath string `json:"test-path"`
 }
 
@@ -44,6 +45,19 @@ func (conf *Config) SetPath() {
 	}
 
 	conf.Path = filepath.Join(path, conf.GetName())
+}
+
+func (conf *Config) AddFlag(flag string) {
+	conf.Flags = append(conf.Flags, flag)
+}
+
+func (conf *Config) RemoveFlag(flag string) {
+	for i := 0; i < len(conf.Flags); i++ {
+		if conf.Flags[i] == flag {
+			conf.Flags = append(conf.Flags[:i], conf.Flags[i+1:]...)
+			return
+		}
+	}
 }
 
 // Conifg Getters
