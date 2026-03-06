@@ -114,6 +114,14 @@ func (conf *Config) display() {
 
 }
 
+func (conf *Config) FlagsShow() {
+	fmt.Printf("________Flags:________\n")
+	for _, flag := range conf.Flags {
+		fmt.Printf("| %s\n", flag)
+	}
+	fmt.Println("______________________")
+}
+
 func (conf *Config) ExeNInRoot() bool {
 	_, err := os.Stat(filepath.Join(conf.GetPath(), conf.GetName()))
 	currentPath, _ := os.Getwd()
@@ -218,6 +226,7 @@ func CreateConfig(projectName string, isC bool) error {
 		config.SetCXXversion("c++20")
 		config.SetMainFile("main.cpp")
 	}
+	config.Flags = make([]string, 0)
 	config.SetPath()
 	config.TestPath = ""
 

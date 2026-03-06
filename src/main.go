@@ -11,6 +11,9 @@ func main() {
 	flags := []byte{}
 
 	for i := 0; i < len(argv); {
+		if argv[i] == "flag" {
+			break
+		}
 		if argv[i][0] == '-' {
 			flags = append(flags, argv[i][1])
 			if argv[i][1] == 'v' {
@@ -49,7 +52,7 @@ func main() {
 			fmt.Println("| 'test <create/run/path> < / /full_path_to_test>' you can create your test(but only with main function.)")
 			fmt.Println("|            'create' creates base test file with default path: <project>/test/test.cpp")
 			fmt.Println("|            'path' + <full_path_to_test> you can include test from another file")
-			fmt.Println("| 'flag <add/remove> <flagname>' adds and removes flags for compilation")
+			fmt.Println("| 'flag <add/remove/show> <flagname/filename/ >' adds and removes flags for compilation")
 		}
 
 	case "version":
@@ -148,7 +151,7 @@ func main() {
 		config := GetConfig()
 		if displ {
 			fmt.Println("| config file found at ", config.GetPath())
-			fmt.Println("| Reading configuration file...\n|_________________________________________\n")
+			fmt.Println("| Reading configuration file...\n|_________________________________________")
 		}
 
 		files := GetFiles(string(config.GetPath() + "/src"))
@@ -157,6 +160,7 @@ func main() {
 			PrintAllFiles(&files)
 		}
 		files = append(files, "-o", config.GetName())
+		files = append(files, config.Flags...)
 
 		if config.MainLangCPP() && config.GetCXXversion() != "" {
 			standart := "-std=" + config.GetCXXversion()
@@ -242,6 +246,7 @@ func main() {
 
 			PrintAllFiles(&files)
 			files = append(files, "-o", "test_outputxyz")
+			files = append(files, config.Flags...)
 
 			if config.MainLangCPP() && config.GetCompiler() == "g++" {
 				standart := "-std=" + config.GetCXXversion()
@@ -268,6 +273,35 @@ func main() {
 			fmt.Println("| Error: unknown argument for 'test'\n| try    $ cls help   for more information")
 			os.Exit(1)
 		}
+
+	case "flag":
+		ArgsCheck(argc, 3)
+		
+		config := GetConfig()
+		TestExistCheck(config)
+
+		switch argv[2] {
+			case "show":
+				config.FlagsShow()
+			case "add":
+				ArgsCheck(argc, 4)
+				config.AddFlag(argv[3])
+				fmt.Printf("Added flag: %s\n", argv[3])
+				err := config.Update()
+				UpdateCheck(err)
+
+			case "remove":
+				ArgsCheck(argc, 4)
+				config.RemoveFlag(argv[3])
+				fmt.Printf("Removed flag: %s\n", argv[3])
+				err := config.Update()
+				UpdateCheck(err)
+				
+			default:
+			fmt.Println("| Error: unknown argument for 'flag'\n| try    $ cls help   for more information")
+			os.Exit(1)
+		}
+
 
 	default:
 		fmt.Println("| Error: unknown argument\n| try   $ cls help    for more information")
