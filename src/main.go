@@ -119,12 +119,16 @@ func main() {
 		CompilationCheck(err)
 
 	case "build", "run":
-		displ := true
-
+		buildflags := map[string]bool {
+			"displ" : true,
+			"raw" : false,
+		}
 		for _, flag := range flags {
 			switch flag {
 			case 'h':
-				displ = false
+				buildflags["displ"] = false
+			case 'r':
+				buildflags["raw"] = true
 			default:
 				fmt.Println("Unknown flag: -", flag)
 			}
@@ -144,29 +148,32 @@ func main() {
 		// }
 
 		//building for project
-		if displ {
+		if buildflags["displ"] {
 			fmt.Println("\n\n ____________Finging_config.json..._______")
 		}
 
 		config := GetConfig()
-		if displ {
+		if buildflags["displ"] {
 			fmt.Println("| config file found at ", config.GetPath())
 			fmt.Println("| Reading configuration file...\n|_________________________________________")
 		}
 
 		files := GetFiles(string(config.GetPath() + "/src"))
 
-		if displ {
+		if buildflags["displ"] {
 			PrintAllFiles(&files)
 		}
 		files = append(files, "-o", config.GetName())
-		files = append(files, config.Flags...)
+
+		if !buildflags["raw"] {
+			files = append(files, config.Flags...)
+		}
 
 		if config.MainLangCPP() && config.GetCXXversion() != "" {
 			standart := "-std=" + config.GetCXXversion()
 			files = append(files, standart)
 		}
-		if displ {
+		if buildflags["displ"] {
 			fmt.Println("\n\n\t\tCompiling project...")
 		}
 
@@ -181,7 +188,7 @@ func main() {
 		}
 
 		if argv[1] == "build" {
-			if displ {
+			if buildflags["displ"] {
 				fmt.Printf("\n _______Compilation_ complete!_______\n| Used %s\n| Executable file \033[32m%s\033[0m\n", config.GetCompiler(), config.GetName())
 			}
 		} else {
