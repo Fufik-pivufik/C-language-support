@@ -152,7 +152,7 @@ func (conf *Config) CreateTest() error {
 }
 
 func (conf *Config) Update() error {
-	textUpdate, err := json.Marshal(conf)
+	textUpdate, err := json.MarshalIndent(conf, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -232,7 +232,7 @@ func CreateConfig(projectName string, isC bool) error {
 
 	fmt.Printf("________Created_project_%s________\n\n", projectName)
 	config.display()
-	jsonFile, err := json.Marshal(config)
+	jsonFile, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
 		return err
 	}
