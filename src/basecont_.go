@@ -1,6 +1,7 @@
 package main
 
 const Version string = "0.002"
+const ColorHelp string = "100;200;255"
 
 const BaseCppFile string = "#include \"../headers/include.hpp\"\n\nint main()\n{\n\tstd::cout << " + `"Hello, World!"` + "<< std::endl;\n\treturn 0;\n}\n"
 const BaseIncludeHPP string = "#include <iostream>\n#pragma once\n"

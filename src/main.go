@@ -31,28 +31,27 @@ func main() {
 
 	argc := len(argv)
 	ArgsCheck(argc, 2)
-
 	switch argv[1] {
 	case "help":
 		if argc < 3 {
-			fmt.Println("_______________________cls_options______________________")
-			fmt.Println("| 'version'/'-v'             shows current cls version\n|")
-			fmt.Println("| 'new <project_name>'   creates new directory with simple structure and default hello world app:")
-			fmt.Println("|\t\t\t<project_name> -> src/ -> main.cpp\n|\t\t\t                  headers/ -> include.hpp\n|\t\t\t                  cls.json\n|")
-			fmt.Println("| 'new <project_name> -c'   creates new directory with simple structure and default hello world app:")
-			fmt.Println("|\t\t\t<project_name> -> src/ -> main.c\n|\t\t\t                  headers/ -> include.h\n|\t\t\t                  cls.json\n|")
-			fmt.Println("| 'build'  builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory")
-			fmt.Println("| 'run'    the same thing as build. Just runs executable file after building")
-			fmt.Println("| Flag '-h' for 'build' and 'run' hides all unneccessary information")
-			fmt.Println("|                                          ")
-			fmt.Println("| 'config <show/name/compiler> < /new_name/new_compiler>' you don't have to edit config by  yourself\n|            'show' shows current configuration")
-			fmt.Println("|            'name' allows you change name for your project(doesn't change directory name)")
-			fmt.Println("|            'compiler' allows you change compiler for your project")
-			fmt.Println("|                                          ")
-			fmt.Println("| 'test <create/run/path> < / /full_path_to_test>' you can create your test(but only with main function.)")
-			fmt.Println("|            'create' creates base test file with default path: <project>/test/test.cpp")
-			fmt.Println("|            'path' + <full_path_to_test> you can include test from another file")
-			fmt.Println("| 'flag <add/remove/show> <flagname/filename/ >' adds and removes flags for compilation")
+			fmt.Printf("_______________________cls_options______________________\n")
+			fmt.Printf("| \033[38;2;%sm'version'/'-v'\033[0m             shows current cls version\n|\n", ColorHelp)
+			fmt.Printf("| \033[38;2;%sm'new <project_name>'\033[0m  creates new directory with simple structure and default hello world app:\n", ColorHelp)
+			fmt.Printf("|\t\t\t\033[38;2;%sm<project_name> -> src/ -> main.cpp\033[0m\n|\t\t\t                  \033[38;2;%smheaders/ -> include.hpp\033[0m\n|\t\t\t                  \033[38;2;%smcls.json\033[0m\n|\n", ColorHelp, ColorHelp, ColorHelp)
+			fmt.Printf("| \033[38;2;%sm'new <project_name> -c'\033[0m   creates new directory with simple structure and default hello world app:\n", ColorHelp)
+			fmt.Printf("|\t\t\t\033[38;2;%sm<project_name> -> src/ -> main.c\033[0m\n|\t\t\t                  \033[38;2;%smheaders/ -> include.h\033[0m\n|\t\t\t                  \033[38;2;%smcls.json\033[0m\n|\n", ColorHelp, ColorHelp, ColorHelp)
+			fmt.Printf("| \033[38;2;%sm'build' \033[0m builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory\n", ColorHelp)
+			fmt.Printf("| \033[38;2;%sm'run'\033[0m    the same thing as build. Just runs executable file after building\n", ColorHelp)
+			fmt.Printf("| Flag '-h' for 'build' and 'run' hides all unneccessary information\n")
+			fmt.Printf("|\n")
+			fmt.Printf("| \033[38;2;%sm'config <show/name/compiler> < /new_name/new_compiler>'\033[0m you don't have to edit config by  yourself\n|            \033[38;2;%sm'show'\033[0m shows current configuration\n", ColorHelp, ColorHelp)
+			fmt.Printf("|            \033[38;2;%sm'name'\033[0m allows you change name for your project(doesn't change directory name)\n", ColorHelp)
+			fmt.Printf("|            \033[38;2;%sm'compiler'\033[0m allows you change compiler for your project\n", ColorHelp)
+			fmt.Printf("|\n")
+			fmt.Printf("| \033[38;2;%sm'test <create/run/path> < / /full_path_to_test>'\033[0m you can create your test(but only with main function.)\n", ColorHelp)
+			fmt.Printf("|            \033[38;2;%sm'create'\033[0m creates base test file with default path: <project>/test/test.cpp\n", ColorHelp)
+			fmt.Printf("|            \033[38;2;%sm'path' + <full_path_to_test>\033[0m you can include test from another file\n", ColorHelp)
+			fmt.Printf("| \033[38;2;%sm'flag <add/remove/show> <flagname/filename/ >'\033[0m adds and removes flags for compilation\n", ColorHelp)
 		}
 
 	case "version":
