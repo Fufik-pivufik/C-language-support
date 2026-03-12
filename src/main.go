@@ -17,8 +17,8 @@ func main() {
 		if argv[i][0] == '-' {
 			flags = append(flags, argv[i][1])
 			if argv[i][1] == 'v' {
-				fmt.Printf("C language support(cls) %s\n", Version)
-				os.Exit(0)
+				argv[1] = "version"
+				break
 			}
 
 			argv = append(argv[:i], argv[i+1:]...)
@@ -56,7 +56,9 @@ func main() {
 		}
 
 	case "version":
-		fmt.Printf("C language support(cls) %s\n", Version)
+		dist := GetDistroName()
+		comp := GetGPPVersion()
+		fmt.Printf("C language support(cls) %s  (%s %s)\n", Version, dist, comp)
 
 	case "new":
 		ArgsCheck(argc, 3)

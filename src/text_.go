@@ -1,6 +1,11 @@
 package main
 
-import ()
+import (
+	"strings"
+	"os"
+	"bufio"
+	"os/exec"
+)
 
 func ParseInputCompile(result []string) []string {
 	outputfile := result[len(result)-1]
@@ -46,4 +51,37 @@ func GetDirPath(filepath string) string {
 	}
 
 	return result[:len(result)-1]
+}
+
+
+func GetDistroName() string {
+	release, err := os.Open("/etc/os-release")
+	if err != nil {
+		return ""
+	}
+	defer release.Close()
+
+	scanner := bufio.NewScanner(release)
+	distro := ""
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, "NAME=") {
+			distro = line[6:len(line) - 1]
+			return distro
+		}
+	}
+	return distro
+}
+
+func GetGPPVersion() string {
+	cmd := exec.Command("g++",  "--version")
+
+	output, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+	lines := strings.Split(string(output), "\n")
+
+	return lines[0]
 }
