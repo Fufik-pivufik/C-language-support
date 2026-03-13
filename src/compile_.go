@@ -96,3 +96,28 @@ func FindMainFile(files *[]string, mainname *string) int {
 
 	return -1
 }
+
+
+func GetHeaders(incPath string) []string {
+result := make([]string, 0)
+files, err := os.ReadDir(incPath)
+if err != nil {
+	fmt.Println("Error cannot read files: ", err)
+	return result
+}
+
+for _, file := range files {
+	filename := file.Name()
+	res_c, _ := regexp.MatchString(`\.hpp$`, filename)
+	res_cpp, _ := regexp.MatchString(`\.h$`, filename)
+	if res_c || res_cpp {
+		result = append(result, filepath.Join(incPath, filename))
+	} else if file.IsDir() {
+		dirPath := filepath.Join(incPath, filename)
+		result = append(result, GetFiles(dirPath)...)
+	}
+}
+
+return result
+
+}

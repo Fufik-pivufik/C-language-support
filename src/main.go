@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-	// "os/exec"
+	"os" 
+	"strconv"
 )
 
 func main() {
@@ -34,12 +34,13 @@ func main() {
 	switch argv[1] {
 	case "help":
 		if argc < 3 {
+			fmt.Printf(" C Language Support - simple project manager for c/c++.\n")
 			fmt.Printf("_______________________cls_options______________________\n")
 			fmt.Printf("| \033[38;2;%sm'version'/'-v'\033[0m             shows current cls version\n|\n", ColorHelp)
 			fmt.Printf("| \033[38;2;%sm'new <project_name>'\033[0m  creates new directory with simple structure and default hello world app:\n", ColorHelp)
-			fmt.Printf("|\t\t\t\033[38;2;%sm<project_name> -> src/ -> main.cpp\033[0m\n|\t\t\t                  \033[38;2;%smheaders/ -> include.hpp\033[0m\n|\t\t\t                  \033[38;2;%smcls.json\033[0m\n|\n", ColorHelp, ColorHelp, ColorHelp)
+			fmt.Printf("|\t\t\t\033[38;2;%sm<project_name> -> src/ -> main.cpp\033[0m\n|\t\t\t                  \033[38;2;%sminclude/ -> include.hpp\033[0m\n|\t\t\t                  \033[38;2;%smcls.json\033[0m\n|\n", ColorHelp, ColorHelp, ColorHelp)
 			fmt.Printf("| \033[38;2;%sm'new <project_name> -c'\033[0m   creates new directory with simple structure and default hello world app:\n", ColorHelp)
-			fmt.Printf("|\t\t\t\033[38;2;%sm<project_name> -> src/ -> main.c\033[0m\n|\t\t\t                  \033[38;2;%smheaders/ -> include.h\033[0m\n|\t\t\t                  \033[38;2;%smcls.json\033[0m\n|\n", ColorHelp, ColorHelp, ColorHelp)
+			fmt.Printf("|\t\t\t\033[38;2;%sm<project_name> -> src/ -> main.c\033[0m\n|\t\t\t                  \033[38;2;%sminclude/ -> include.h\033[0m\n|\t\t\t                  \033[38;2;%smcls.json\033[0m\n|\n", ColorHelp, ColorHelp, ColorHelp)
 			fmt.Printf("| \033[38;2;%sm'build' \033[0m builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory\n", ColorHelp)
 			fmt.Printf("| \033[38;2;%sm'run'\033[0m    the same thing as build. Just runs executable file after building\n", ColorHelp)
 			fmt.Printf("| Flag '-h' for 'build' and 'run' hides all unneccessary information\n")
@@ -78,7 +79,7 @@ func main() {
 		err = os.Mkdir(srcPath, 0777)
 		DirCreationCheck(err)
 
-		headPath := argv[2] + "/headers"
+		headPath := argv[2] + "/include"
 		err = os.Mkdir(headPath, 0777)
 		DirCreationCheck(err)
 
@@ -123,6 +124,7 @@ func main() {
 		buildflags := map[string]bool {
 			"displ" : true,
 			"raw" : false,
+			"lib" : false,
 		}
 		for _, flag := range flags {
 			switch flag {
@@ -130,23 +132,13 @@ func main() {
 				buildflags["displ"] = false
 			case 'r':
 				buildflags["raw"] = true
+			case 'l':
+				buildflags["lib"] = true;
 			default:
 				fmt.Println("Unknown flag: -", flag)
 			}
 		}
-		// compiling lsit of files
-		// if argc > 2 && argv[1] == "build" {
-		// 	compileArgs := ParseInputCompile(os.Args[2:])
-		// 	cmd := exec.Command("g++", compileArgs...)
-		// 	cmd.Stdout = os.Stdout
-		// 	cmd.Stderr = os.Stderr
-		//
-		// 	fmt.Println("Compiling...")
-		//
-		// 	err := cmd.Run()
-		// 	CompilationCheck(err)
-		// 	break
-		// }
+
 
 		//building for project
 		if buildflags["displ"] {
@@ -157,6 +149,85 @@ func main() {
 		if buildflags["displ"] {
 			fmt.Println("| config file found at ", config.GetPath())
 			fmt.Println("| Reading configuration file...\n|_________________________________________")
+		}
+
+		if buildflags["lib"] {
+			if argv[1] == "run" {
+				fmt.Printf("you cannot run lirary :(\n")
+				os.Exit(2);
+			}
+			
+			files := GetFiles(string(config.GetPath() + "/src"))
+			incdir := "-I" + config.GetPath() + "/include"
+				os.Mkdir(config.GetPath() + "/mod", 0777)
+				modpath := config.GetPath() + "/mod"
+			for i, file := range files {
+				modname := "mod" + strconv.Itoa(i) + ".o"
+				
+				if buildflags["displ"] {
+					fmt.Printf("|\n| compiling file %s to %s\n", GetFileName(file), modname)
+				}
+
+
+				err := Execute(true, "g++", "-c" ,incdir, file, "-o", modname)
+				CompilationCheck(err)
+
+				err = Execute(true, "mv", modname, modpath + "/" + modname)
+				CompilationCheck(err)
+			}
+
+			if buildflags["displ"] {
+				fmt.Printf("|\n| Compilation done!\n")
+			}
+
+			modules, err := os.ReadDir(modpath)
+			if err != nil {
+				fmt.Println("Error cannot read files: ", err)
+				os.Exit(1)
+			}
+
+			mods := make([]string, 0)
+			libname := config.GetName() + ".a"
+			mods = append(mods, "rcs")
+			mods = append(mods, libname)
+			for _, module := range modules {
+				var modname string = config.GetPath() + "/mod/" + module.Name()
+				mods = append(mods, modname)
+			}
+			err = Execute(true, "ar", mods...)
+			CompilationCheck(err)
+
+			file, err := os.Create(config.GetName() + ".h")
+			if err != nil {
+				file, err = os.Open(config.GetPath() + "/" + config.GetName() + ".h")
+				if err != nil {
+					fmt.Println("| Cannot open file: ", err)
+				}
+			}
+			defer file.Close()
+			incPath := config.GetPath() + "/include"
+			headers := GetHeaders(incPath)
+			for _, header := range headers {
+				file.Write([]byte("#include\""+header+"\"\n"))
+			}
+
+			currdir, err := os.Getwd()
+			if err != nil {
+				fmt.Println("Error cannot find your current path: ", err)
+				os.Exit(1)
+			}
+
+
+			if currdir != config.GetPath() {
+				err = Execute(true, "mv", config.GetName() + ".a", config.GetPath() + "/" + config.GetName() + ".a")
+				err = Execute(true, "mv", config.GetName() + ".h", config.GetPath() + "/" + config.GetName() + ".h")
+				CompilationCheck(err)
+			}
+
+			if buildflags["displ"] {
+			fmt.Printf("|\n| lib file \033[38;2;100;150;255m%s\033[0m\n| header for include \033[38;2;100;150;255m%s\033[0m\n", config.GetName() + ".a", config.GetName() + ".h")
+			}
+			os.Exit(0)
 		}
 
 		files := GetFiles(string(config.GetPath() + "/src"))
