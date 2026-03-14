@@ -16,6 +16,7 @@ type Config struct {
 	CXXstd   string `json:"c++ standart"`
 	Path     string `json:"path"`
 	Flags	 []string `json:"flags"`
+	Dependencies []string `json:"extends"`
 	TestPath string `json:"test-path"`
 }
 
@@ -55,6 +56,18 @@ func (conf *Config) RemoveFlag(flag string) {
 	for i := 0; i < len(conf.Flags); i++ {
 		if conf.Flags[i] == flag {
 			conf.Flags = append(conf.Flags[:i], conf.Flags[i+1:]...)
+			return
+		}
+	}
+}
+
+func (conf *Config) AddDependence(url string) {
+	conf.Dependencies = append(conf.Dependencies, url)
+}
+func (conf *Config) RemoveDependence(url string) {
+	for i := 0; i < len(conf.Dependencies); i++ {
+		if conf.Dependencies[i] == url {
+			conf.Dependencies = append(conf.Dependencies[:i], conf.Dependencies[i+1:]...)
 			return
 		}
 	}

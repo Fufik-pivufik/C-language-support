@@ -415,6 +415,9 @@ func main() {
 		go GettingAnimation(done)
 		err = <-errGo
 		close(done)
+
+		config.AddDependence(argv[2])
+		config.Update()
 		
 		fmt.Printf("\r Downloaded repository \033[38;2;%sm%s\033[0m\n", ColorHelp, GetFileName(argv[2]))
 
