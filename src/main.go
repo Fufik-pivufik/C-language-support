@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os" 
+	"os"
+	"regexp"
 	"strconv"
 )
 
@@ -444,6 +445,22 @@ func main() {
 					os.Exit(1)
 				}
 		}
+
+		files, err = os.ReadDir(".")
+		if err != nil {
+			fmt.Println("|", err)
+			os.Exit(1)
+		}
+		
+		for _, file := range files {
+			is_lib, _ :=regexp.MatchString(`\.a`, file.Name())
+			if is_lib  {
+				config.AddFlag(config.GetPath() + "/extend/" + GetFileName(argv[2]) + "/" + file.Name())
+				config.Update()
+				break
+			}
+		}
+
 
 
 	default:
