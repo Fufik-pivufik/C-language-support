@@ -44,6 +44,7 @@ func main() {
 			fmt.Printf("| \033[38;2;%sm'build' \033[0m builds all files from list with output name(default main or project name)\n|\t\t Without arguments build project from root or inner directory\n", ColorHelp)
 			fmt.Printf("| \033[38;2;%sm'run'\033[0m    the same thing as build. Just runs executable file after building\n", ColorHelp)
 			fmt.Printf("| Flag '-h' for 'build' and 'run' hides all unneccessary information\n")
+			fmt.Printf("| Flag \033[38;2;%sm'-l'\033[0m for 'build' builds your project as a \033[38;2;%smstatic library\033[0m with '.a' extension\n", ColorHelp, ColorHelp)
 			fmt.Printf("|\n")
 			fmt.Printf("| \033[38;2;%sm'config <show/name/compiler> < /new_name/new_compiler>'\033[0m you don't have to edit config by  yourself\n|            \033[38;2;%sm'show'\033[0m shows current configuration\n", ColorHelp, ColorHelp)
 			fmt.Printf("|            \033[38;2;%sm'name'\033[0m allows you change name for your project(doesn't change directory name)\n", ColorHelp)
@@ -52,13 +53,15 @@ func main() {
 			fmt.Printf("| \033[38;2;%sm'test <create/run/path> < / /full_path_to_test>'\033[0m you can create your test(but only with main function.)\n", ColorHelp)
 			fmt.Printf("|            \033[38;2;%sm'create'\033[0m creates base test file with default path: <project>/test/test.cpp\n", ColorHelp)
 			fmt.Printf("|            \033[38;2;%sm'path' + <full_path_to_test>\033[0m you can include test from another file\n", ColorHelp)
-			fmt.Printf("| \033[38;2;%sm'flag <add/remove/show> <flagname/filename/ >'\033[0m adds and removes flags for compilation\n", ColorHelp)
+			fmt.Printf("| \033[38;2;%sm'flag <add/remove/show> <flagname/filename/ >'\033[0m adds and removes flags for compilation\n|\n", ColorHelp)
+			fmt.Printf("| \033[38;2;%sm'get <URL>'\033[0m downloads and installs library from \033[38;2;%smgithub.com\033[0m which was made with cls or cmake\n|\n", ColorHelp, ColorHelp)
 		}
 
 	case "version":
 		dist := GetDistroName()
 		comp := GetGPPVersion()
 		fmt.Printf("C language support(cls) %s  (%s %s)\n", Version, dist, comp)
+	
 
 	case "new":
 		ArgsCheck(argc, 3)
@@ -113,6 +116,13 @@ func main() {
 			err = DefaultCFile(mainFile)
 			DefaultCodeCheck(err)
 		}
+
+		clangdf, err := os.Create(argv[2] + "/.clangd")
+		CreationCheck(err)
+		
+		err = DefaultClangdFile(clangdf, argv[2])
+		DefaultCodeCheck(err)
+
 
 		err = CreateConfig(argv[2], Cproj)
 		ConfigCreationCheck(err)
@@ -235,6 +245,7 @@ func main() {
 		if buildflags["displ"] {
 			PrintAllFiles(&files)
 		}
+		files = append(files, "-Iinclude")
 		files = append(files, "-o", config.GetName())
 
 		if !buildflags["raw"] {
@@ -380,6 +391,32 @@ func main() {
 			fmt.Println("| Error: unknown argument for 'flag'\n| try    $ cls help   for more information")
 			os.Exit(1)
 		}
+
+
+	case "get":
+		ArgsCheck(argc, 3)
+		config := GetConfig()
+		TestExistCheck(config)
+		
+		extPath := config.GetPath() + "/extend"
+		os.Mkdir(extPath, 0777)
+		err := os.Chdir(extPath)
+		if err != nil {
+			fmt.Println("|", err)
+			os.Exit(1)	
+		}
+		errGo := make(chan error)
+		go func(error_par chan<- error) {
+			err := Execute(false, "git", "clone", argv[2])
+			error_par <- err
+		}(errGo)
+		
+		done := make(chan struct{})
+		go GettingAnimation(done)
+		err = <-errGo
+		close(done)
+		
+		fmt.Printf("\r Downloaded repository \033[38;2;%sm%s\033[0m\n", ColorHelp, GetFileName(argv[2]))
 
 
 	default:

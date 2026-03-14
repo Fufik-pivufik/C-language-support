@@ -44,12 +44,31 @@ func DefaultCFile(file *os.File) error {
 	return nil
 }
 
+func DefaultClangdFile(file *os.File, path string) error {
+	defer file.Close()
+	absPath, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	path = absPath + "/" + path
+	includep := "[-I" + path + "/include" + "]\n"
+	//externalp := path + "/external"
+	
+	_, err = file.Write([]byte("CompileFlags:\n\tAdd: " +includep))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Execute(display bool, command string, attributes ...string) error {
 	cmd := exec.Command(command, attributes...)
 	if display {
 		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 	}
-	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 
 	err := cmd.Run()
