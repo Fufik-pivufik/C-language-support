@@ -60,7 +60,7 @@ func main() {
 	case "version":
 		dist := GetDistroName()
 		comp := GetGPPVersion()
-		fmt.Printf("C language support(cls) %s  (%s %s)\n", Version, dist, comp)
+		fmt.Printf("C language support (cls) %s  (%s %s)\n", Version, dist, comp)
 	
 
 	case "new":
