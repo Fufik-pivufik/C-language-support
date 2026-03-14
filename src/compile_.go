@@ -52,10 +52,10 @@ func DefaultClangdFile(file *os.File, path string) error {
 	}
 
 	path = absPath + "/" + path
-	includep := "[-I" + path + "/include" + "]\n"
-	//externalp := path + "/external"
+	includep := "-I" + path + "/include"
+	externalp :="-I" + path + "/extend"
 	
-	_, err = file.Write([]byte("CompileFlags:\n\tAdd: " +includep))
+	_, err = file.Write([]byte("CompileFlags:\n\tAdd: [" +includep + ", " + externalp + "]\n"))
 	if err != nil {
 		return err
 	}

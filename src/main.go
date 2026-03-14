@@ -246,6 +246,7 @@ func main() {
 			PrintAllFiles(&files)
 		}
 		files = append(files, "-Iinclude")
+		files = append(files, "-Iextend")
 		files = append(files, "-o", config.GetName())
 
 		if !buildflags["raw"] {
@@ -420,6 +421,29 @@ func main() {
 		config.Update()
 		
 		fmt.Printf("\r Downloaded repository \033[38;2;%sm%s\033[0m\n", ColorHelp, GetFileName(argv[2]))
+		fmt.Printf("Checking if it's cls lib...\n")
+		files, err := os.ReadDir(GetFileName(argv[2]))
+		if err != nil {
+			fmt.Println("|", err)
+			os.Exit(1)
+		}
+		is_cls := false
+		for _, file := range files {
+			if file.Name() == "cls.json" {
+				is_cls = true
+				break
+			}
+		} 
+
+		if is_cls {
+				fmt.Printf("Library uses cls!\n")
+				os.Chdir(GetFileName(argv[2]))
+
+				err := Execute(true, "cls", "build", "-l")
+				if err != nil {
+					os.Exit(1)
+				}
+		}
 
 
 	default:
