@@ -11,6 +11,7 @@ import (
 type Config struct {
 	// Version  string `json:"cls-version"`
 	Name     string `json:"name"`
+	Version  string `json:"version"`
 	MainFile string `json:"main-file"`
 	Compiler string `json:"compiler"`
 	CXXstd   string `json:"c++ standart"`
@@ -24,6 +25,10 @@ type Config struct {
 
 func (conf *Config) SetName(name string) {
 	conf.Name = name
+}
+
+func (conf *Config) SetVersion(ver string) {
+	conf.Version = ver
 }
 
 func (conf *Config) SetCompiler(compiler string) {
@@ -79,6 +84,10 @@ func (conf *Config) GetName() string {
 	return conf.Name
 }
 
+func (conf *Config) GetVersion() string {
+	return conf.Version
+}
+
 func (conf *Config) GetCompiler() string {
 	return conf.Compiler
 }
@@ -116,6 +125,7 @@ func (conf *Config) MainLangCPP() bool {
 func (conf *Config) display() {
 	fmt.Printf("________config:________\n")
 	fmt.Printf("| name: %s\n", conf.GetName())
+	fmt.Printf("| version: %s\n", conf.GetVersion())
 	fmt.Printf("| main file: %s\n", conf.GetMainFile())
 	fmt.Printf("| compiler: %s\n", conf.GetCompiler())
 	if !(conf.GetCXXversion() == "") {
@@ -234,6 +244,7 @@ func CreateConfig(projectName string, isC bool) error {
 		config.SetCompiler("gcc")
 		config.SetCXXversion("")
 		config.SetMainFile("main.c")
+		config.SetVersion("")
 	} else {
 		config.SetCompiler("g++")
 		config.SetCXXversion("c++20")

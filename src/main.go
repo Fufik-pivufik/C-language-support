@@ -288,6 +288,10 @@ func main() {
 		switch argv[2] {
 		case "show":
 			config.display()
+		case "version":
+			ArgsCheck(argc, 4)
+			config.SetVersion(argv[3])
+			fmt.Println("Project's version succesfully updated")
 
 		case "name":
 			ArgsCheck(argc, 4)
@@ -462,6 +466,9 @@ func main() {
 		}
 
 
+	case "release":
+		config := GetConfig()
+		GenInstall(config)
 
 	default:
 		fmt.Println("| Error: unknown argument\n| try   $ cls help    for more information")

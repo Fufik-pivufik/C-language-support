@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 func DefaultCppFile(file *os.File) error {
@@ -139,4 +140,26 @@ for _, file := range files {
 
 return result
 
+}
+
+
+func GenInstall(conf *Config) error {
+	var script string
+	installFile, err := os.Create(conf.GetPath() + "/install.sh")
+	if err != nil {
+		return err
+	}
+	defer installFile.Close()
+
+	script = conf.GetCompiler() + " -Iinclude -Iextend \\\n"
+	
+	files := GetFiles(conf.GetPath() + "/src")
+	for _, file := range files {
+		file = strings.Replace(file, conf.GetPath(), ".", 1)
+		script += "\t" + file + " \\\n"
+	}
+	script += "\t-o " + conf.GetName()
+	installFile.Write([]byte(script))
+	installFile.Chmod(0777)
+	return nil
 }
