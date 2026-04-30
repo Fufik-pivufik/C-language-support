@@ -45,7 +45,7 @@ func DefaultCFile(file *os.File) error {
 	return nil
 }
 
-func DefaultClangdFile(file *os.File, path string) error {
+func DefaultClangdFile(file *os.File, path string, std string) error {
 	defer file.Close()
 	absPath, err := os.Getwd()
 	if err != nil {
@@ -56,7 +56,7 @@ func DefaultClangdFile(file *os.File, path string) error {
 	includep := "-I" + path + "/include"
 	externalp :="-I" + path + "/extend"
 	
-	_, err = file.Write([]byte("CompileFlags:\n\tAdd: [" +includep + ", " + externalp + "]\n"))
+	_, err = file.Write([]byte("CompileFlags:\n\tAdd: [" +includep + ", " + externalp + ", -std=" + std + "]\n"))
 	if err != nil {
 		return err
 	}

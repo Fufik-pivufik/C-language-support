@@ -242,7 +242,7 @@ func CreateConfig(projectName string, isC bool) error {
 	if isC {
 
 		config.SetCompiler("gcc")
-		config.SetCXXversion("")
+		config.SetCXXversion("c23")
 		config.SetMainFile("main.c")
 		config.SetVersion("")
 	} else {

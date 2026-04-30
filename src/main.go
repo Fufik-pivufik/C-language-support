@@ -87,6 +87,9 @@ func main() {
 		err = os.Mkdir(headPath, 0777)
 		DirCreationCheck(err)
 
+		clangdf, err := os.Create(argv[2] + "/.clangd")
+		CreationCheck(err)
+
 		if !Cproj {
 
 			hppPath := headPath + "/include.hpp"
@@ -102,6 +105,9 @@ func main() {
 
 			err = DefaultCppFile(mainFile)
 			DefaultCodeCheck(err)
+
+			err = DefaultClangdFile(clangdf, argv[2], "c++20")
+			DefaultCodeCheck(err)
 		} else {
 			hPath := headPath + "/include.h"
 			hFile, err := os.Create(hPath)
@@ -116,13 +122,13 @@ func main() {
 
 			err = DefaultCFile(mainFile)
 			DefaultCodeCheck(err)
+
+			err = DefaultClangdFile(clangdf, argv[2], "c23")
+			DefaultCodeCheck(err)
 		}
 
-		clangdf, err := os.Create(argv[2] + "/.clangd")
-		CreationCheck(err)
 		
-		err = DefaultClangdFile(clangdf, argv[2])
-		DefaultCodeCheck(err)
+		
 
 
 		err = CreateConfig(argv[2], Cproj)
@@ -254,7 +260,7 @@ func main() {
 			files = append(files, config.Flags...)
 		}
 
-		if config.MainLangCPP() && config.GetCXXversion() != "" {
+		if config.GetCXXversion() != "" {
 			standart := "-std=" + config.GetCXXversion()
 			files = append(files, standart)
 		}
@@ -308,6 +314,13 @@ func main() {
 		case "std":
 			ArgsCheck(argc, 4)
 			config.SetCXXversion(argv[3])
+
+			clangf, err := os.OpenFile(config.GetPath() + "/.clangd", os.O_RDWR|os.O_CREATE|os.O_TRUNC,0777)
+			CreationCheck(err)
+			err = DefaultClangdFile(clangf, argv[2], argv[3])
+			DefaultCodeCheck(err)
+			clangf.Close()
+
 			fmt.Println("Language standart succesfully updated")
 
 		default:
