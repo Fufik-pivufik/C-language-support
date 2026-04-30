@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 func DefaultCppFile(file *os.File) error {
@@ -55,8 +56,14 @@ func DefaultClangdFile(file *os.File, path string, std string) error {
 	path = absPath + "/" + path
 	includep := "-I" + path + "/include"
 	externalp :="-I" + path + "/extend"
-	
-	_, err = file.Write([]byte("CompileFlags:\n\tAdd: [" +includep + ", " + externalp + ", -std=" + std + "]\n"))
+	onlycxxFlag := "-x";
+	for _, ch := range std {
+		if (unicode.IsDigit(ch)) {
+			break
+		}
+		onlycxxFlag += string(ch) 
+	}
+	_, err = file.Write([]byte("CompileFlags:\n\tAdd: [" +includep + ", " + externalp + ", " + onlycxxFlag + ", -std=" + std + "]\n"))
 	if err != nil {
 		return err
 	}

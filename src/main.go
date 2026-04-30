@@ -317,7 +317,7 @@ func main() {
 
 			clangf, err := os.OpenFile(config.GetPath() + "/.clangd", os.O_RDWR|os.O_CREATE|os.O_TRUNC,0777)
 			CreationCheck(err)
-			err = DefaultClangdFile(clangf, argv[2], argv[3])
+			err = DefaultClangdFile(clangf, ".", argv[3])
 			DefaultCodeCheck(err)
 			clangf.Close()
 
